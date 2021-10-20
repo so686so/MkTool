@@ -1,0 +1,74 @@
+#!/bin/bash
+_mk() {
+    local cur
+	local is_opt_value="false"
+
+    COMPREPLY=()
+    _get_comp_words_by_ref cur
+    
+    opt_list=( 	"setting" "option" "update" "version" "list" "load" "backup" "help" "pull"\
+	    		"clear" "store" "open" "patch_log" "sd_copy" "kill" "show" "start" "size" \
+				"package_list" "plist" "solve_conflict")
+
+	total_list=(${opt_list[@]})
+    total_list+=($(extract_mkapp_list))
+
+    if [ $COMP_CWORD = 1 ]
+    then
+	    COMPREPLY=( $( compgen -W "$(echo ${total_list[@]})" -- "$cur" ) )
+    elif [ $COMP_CWORD = 2 ]
+    then
+	case "${COMP_WORDS[1]}" in
+		open)
+			compopt -o nospace
+			_filedir	
+			;;
+		clear)
+			COMPREPLY=( $( compgen -W "app os fw_install pack all" -- "$cur" ) )
+			;;
+		pull)
+			COMPREPLY=( $( compgen -W "v4 a3 s3 v3 v8 all" -- "$cur" ) )
+			;;
+		setting)
+			COMPREPLY=( $( compgen -W "V4 A3 S3 V3 V8" -- "$cur" ) )
+			;;
+        c | i | ci)
+            COMPREPLY=( $( compgen -W " " -- "$cur" ) )
+            ;;
+        a)
+            COMPREPLY=( $( compgen -W "$(extract_mkapp_list) ." -- "$cur" ) )
+            ;;
+		kill)
+			COMPREPLY=( $( compgen -W "safe all" -- "$cur" ) )
+            ;;
+		*)
+			for arg in ${opt_list[@]}
+			do
+				if [ "${arg}" == "${COMP_WORDS[1]}" ]
+				then
+					is_opt_value="true"
+					break
+				fi
+			done
+
+			if [ "${is_opt_value}" == "true" ]
+			then
+				COMPREPLY=( $( compgen -W " " -- "$cur" ) )
+			else
+				COMPREPLY=( $( compgen -W "useDefault cleanInstall mkAppOnly" -- "$cur" ) )
+			fi
+			;;
+	esac
+	elif [ $COMP_CWORD -gt 2 ]
+    then
+	case "${COMP_WORDS[1]}" in
+		clear)
+			COMPREPLY=( $( compgen -W "app os fw_install pack all" -- "$cur" ) )
+			;;
+		pull)
+			COMPREPLY=( $( compgen -W "v4 a3 s3 v3 v8 all" -- "$cur" ) )
+			;;
+	esac
+    fi
+}
+complete -F _mk mk
