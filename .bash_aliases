@@ -354,9 +354,10 @@ function show_mkapp_list() {
 
 	local START_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'case $1 in' | awk -F ':' '{print $1}')
 	local END_LINE=$(wc -l ~/blackbox/system/mk_app.sh | awk -F ' ' '{print $1}')
+	local LIST_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'esac' | awk -F ':' '{print $1}')
 
-	local SUBS=$(( ${END_LINE} - ${START_LINE} ))
-	local TAIL_CUT=$(( ${SUBS} - 6 ))	#HC
+	local SUBS=$(( ${END_LINE} - ${START_LINE} + 1 ))
+	local TAIL_CUT=$(( ${LIST_LINE} - ${START_LINE} ))	#HC
 
 	if [ ! "$1" == "" ]
 	then
@@ -797,8 +798,13 @@ function mk_open_dir() {
 
 	if [ $# -eq 1 ]
 	then
-		nautilus $1
-		return
+		if [ "$1" == "FW" ]
+		then
+			nautilus ${HOME}/FW
+		else
+			nautilus $1
+			return
+		fi
 	fi
 
 	if [ "${PROJECT_NAME}" == "a3" ]
@@ -806,11 +812,6 @@ function mk_open_dir() {
 		INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
 	else
 		INS_DIR="${HOME}/tftpboot/gnet_${PROJECT_NAME}/fw_install"
-	fi
-	
-	if [ -d "${HOME}/FW" -a "${AUTO_DIR_COPY}" == "Y" ]
-	then
-		nautilus ${HOME}/FW
 	fi
 
 	nautilus ${INS_DIR}
@@ -1300,7 +1301,9 @@ function kill_all_terminal() {
         echo -e "- Kill Terminal ${count} [ ${cYellow}${PID_LIST[i]}${cReset} ]"
     done
 
-    echo -e "\n[ Done ] Kill all Terminal\n"
+	killall nautilus
+
+    echo -e "\n[ Done ] Kill all Terminal & Folder\n"
 }
 
 function show_info() {
@@ -1447,6 +1450,46 @@ function solve_gitPull_conflict() {
 	cd ${pre_dir}
 }
 
+function open_git_cola() {
+	local PROJECT_LIST=(${PROJECT_LIST[@]})
+
+	local is_valid_arg="false"
+	local temp_select=""
+	local SELECT_PROJECT=""
+
+	# Check Var is valid
+	if [ $# -ge 1 ]
+	then
+		temp_select=`echo -e $1 | tr [a-z] [A-Z]`
+		for each in ${PROJECT_LIST[@]}
+		do
+			if [ "${temp_select}" == "${each}" ]
+			then
+				is_valid_arg="true"
+				break
+			fi
+		done
+
+		if [ "${is_valid_arg}" == "false" ]
+		then
+			echo -e "${NOTICE} Not Valid Argument.\n"
+			return
+		fi
+	fi
+
+	# Choose Project to Change
+	if [ "${is_valid_arg}" == "true" ]
+	then
+		# Set Change Project when recv Correct Arg
+		SELECT_PROJECT=`echo -e ${temp_select} | tr [A-Z] [a-z]`
+	else
+		SELECT_PROJECT=$(project_version_name)
+	fi
+	
+	git-cola -r ${HOME}/blackbox/${SELECT_PROJECT}
+
+}
+
 function make_update_file_tool() {
 	CUR_DIR=`pwd`
 	cd ~/blackbox/source
@@ -1582,6 +1625,9 @@ function make_update_file_tool() {
 				;;
 			solve_conflict | solve)
 				solve_gitPull_conflict
+				;;
+			git_cola | gc)
+				open_git_cola $2
 				;;
 			*)
 				make_update_file $1 $2
