@@ -145,8 +145,8 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.0
-LAST_UPDATE=2021-08-09
+MK_VERSION=1.2.2
+LAST_UPDATE=2021-10-21
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
 
@@ -161,7 +161,7 @@ LAST_BACKUP_HOUR=11
 
 FTP_ID=so686so
 FTP_PW=1663
-ROOT_PW=!@so7019so
+ROOT_PW=
 
 cRed='\x1b[31m'
 cGreen='\x1b[32m'
@@ -967,12 +967,13 @@ function fw_install_dir_backup() {
 }
 
 function update_mk_file() {
-	IP="125.7.227.33"
+	local pre_dir=`pwd`
 
 	echo -e "\n[ Run : mk Tool Update ]"
 
 	cd ~
 	cp ~/.bash_aliases ~/.bash_aliases_backUp
+	cp ~/.bash_completion ~/.bash_completion_backUp
 
 	local BACKUP_FLAG=( "AUTO_DIR_COPY" "AUTO_NFS_DETECT" "AUTO_BACKUP" "CHANGE_PROMPT" "IMPROVED_AUTO_COMPLETE"\
 						"LAST_BACKUP_DATE" "LAST_BACKUP_HOUR" "ROOT_PW" )
@@ -994,14 +995,12 @@ function update_mk_file() {
 		BACKUP_OPTION_VALUE+=(${temp_value})
 	done
 
-	ftp -n $IP << EOF
-	user $FTP_ID $FTP_PW
-	bin
-	cd /VOL1/Firmware/"00. 기타"/"신입사원 초기셋팅"/mkTool
-	get .bash_aliases
-	put .bash_completion
-	bye
-EOF
+	cd ${HOME}/blackbox
+	git clone https://github.com/so686so/MkTool.git
+	cd MkTool
+
+	\mv -f .bash_aliases ${HOME}/
+	\mv -f .bash_completion ${HOME}/
 
 	if [ $? -gt 0 ]
 	then
@@ -1021,12 +1020,21 @@ EOF
 		sed -i "${BACKUP_OPTION_LINE[$i]}s/.*/${BACKUP_FLAG[$i]}=${BACKUP_OPTION_VALUE[$i]}/g" ~/.bash_aliases
 	done
 
-	echo -e "[ Running... ] Autocomplete script being applied to root directory"
-
 	cd ~
+	echo -e "[ Running... ] Remove temp MkTool Dir"
+	rm -rf ${HOME}/blackbox/MkTool
+
+	echo -e "[ Running... ] Meld Backup .bash_aliases & .bash_completion"
+	meld .bash_aliases .bash_aliases_backUp
+	meld .bash_completion .bash_completion_backUp
+
+	echo -e "[ Running... ] Autocomplete script being applied to root directory"
 	source ~/.bashrc
+
 	echo -e "[ Done ] Autocomplete script being applied done."
 	echo -e "[ Done ] mk Tool Update Complete\n"
+
+	cd ${pre_dir}
 }
 
 function check_root_pw() {
@@ -1042,34 +1050,21 @@ function check_root_pw() {
 }
 
 function upload_mkTool() {
-	IP="125.7.227.33"
-
 	version_change_to_upload
 
-	ftp -n $IP << EOF
-	user $FTP_ID $FTP_PW
-	bin
-	cd /VOL1/Firmware/"00. 기타"/"신입사원 초기셋팅"/mkTool
-	get .patch_log.txt
-	bye
-EOF
+	cd ${HOME}/Personal/MkTool
 
 	printf "[ ${MK_VERSION} ] : "
 	read patch_log_comment
 
-	sed -i "1s/.*/LAST_UPDATE=${MK_VERSION}/g" ~/.patch_log.txt
-	echo -e "[ ${MK_VERSION} ] - "${patch_log_comment} >> ~/.patch_log.txt
-	cd ~
+	cp -af ~/.bash_aliases ${HOME}/Personal/MkTool
+	cp -af ~/.bash_completion ${HOME}/Personal/MkTool
 
-	ftp -n $IP << EOF
-	user $FTP_ID $FTP_PW
-	bin
-	cd /VOL1/Firmware/"00. 기타"/"신입사원 초기셋팅"/mkTool
-	put .bash_aliases
-	put .patch_log.txt
-	put .bash_completion
-	bye
-EOF
+	git commit -am "${patch_log_comment}"
+
+	git push
+
+	echo -e "[ Done ] Upload Done : <${MK_VERSION}> ${patch_log_comment}"
 }
 
 function update_package_version() {
