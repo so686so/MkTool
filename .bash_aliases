@@ -145,7 +145,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.3
+MK_VERSION=1.2.4
 LAST_UPDATE=2021-10-21
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
@@ -440,23 +440,6 @@ function setting_option() {
 
 function check_installed_package() {
 	$1 --version &>/dev/null
-}
-
-function show_patch_log() {
-	IP="125.7.227.33"
-
-	ftp -n $IP << EOF
-	user $FTP_ID $FTP_PW
-	bin
-	cd /VOL1/Firmware/"00. 기타"/"신입사원 초기셋팅"/mkTool
-	get .patch_log.txt
-	bye
-EOF
-	resize -s ${LINES} 120 >/dev/null
-	echo
-	cat .patch_log.txt
-	echo
-	rm .patch_log.txt
 }
 
 function send_file_to_nfs() {
@@ -1594,9 +1577,6 @@ function make_update_file_tool() {
 				;;
 			nfs)
 				setting_nfs
-				;;
-			patch_log)
-				show_patch_log
 				;;
 			sd_copy)
 				sd_copy_file
