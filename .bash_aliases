@@ -145,7 +145,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.2
+MK_VERSION=1.2.3
 LAST_UPDATE=2021-10-21
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
@@ -994,6 +994,11 @@ function update_mk_file() {
 		temp_value=$(get_backup_value_option ${BACKUP_FLAG[$i]})
 		BACKUP_OPTION_VALUE+=(${temp_value})
 	done
+
+	if [ -d "${HOME}/blackbox/MkTool" ]
+	then
+		rm -rf ${HOME}/blackbox/MkTool
+	fi
 
 	cd ${HOME}/blackbox
 	git clone https://github.com/so686so/MkTool.git
