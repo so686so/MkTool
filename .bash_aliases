@@ -140,13 +140,13 @@ alias Vim='vim -O'
 
 # Option
 AUTO_DIR_COPY=Y
-AUTO_NFS_DETECT=N
+AUTO_NFS_DETECT=Y
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.4
-LAST_UPDATE=2021-10-21
+MK_VERSION=1.2.5
+LAST_UPDATE=2021-12-14
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
 
@@ -1654,3 +1654,5 @@ strip_file() {
 }
 
 # alias st='strip_file'
+alias get_idf='. $HOME/ESP/esp-idf/export.sh'
+alias mm='make clean; make; make install;'
