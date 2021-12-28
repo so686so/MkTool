@@ -1,28 +1,146 @@
-# CUSTOM ALIAS
+#!/bin/bash
+# ================================================================= #
+#                           CUSTOM SCRIPT                           #
+# ----------------------------------------------------------------- #
+#                                                                   #
+# * This file is shell script bundle for 'Gnet System'
+#                                                                   #
+# ----------------------------------------------------------------- #
+#                                                                   #
+# 1. fzf Utility
+#       - Search utility function using fzf
+#                                                                   #
+# 2. Mk Tool
+#       - A set of shell script commands for convenience
+#                                                                   #
+# ----------------------------------------------------------------- #
+#                                                                   #
+# 1. Essential Package
+#       - fzf
+#       - ripgrep
+#                                                                   #
+# 2. Recommended Package
+#       - duf
+#       - neofetch
+#                                                                   #
+# ----------------------------------------------------------------- #
+#                                                                   #
+# > Install 'fzf'
+#   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+#   ~/.fzf/install
+#                                                                   #
+# ================================================================= #
 
-# Fix Error when Window <-> Linux 
+# Fix Carriage Return Error when Window <-> Linux 
 sed -i -e 's/\r$//' ~/.bash_aliases
 sed -i -e 's/\r$//' ~/.bash_completion
 
-# ============================= #
-# 		   fzf Utility			#
-# ============================= #
+# Global Define : Color
+cRed='\e[31m'
+cBlue='\e[34m'
+cGreen='\e[32m'
+cYellow='\e[33m'
+cWhite='\e[37m'
+cSky='\e[36m'
+cDim='\e[2m'
+cBold='\e[1m'
+cLine='\e[4m'
+cReset='\e[0m'
 
-# PACKAGE NEED TO : fzf, ripgrep
-# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-# ~/.fzf/install
+# Global Define : Prefix
+RUN="${cBold}[ ${cGreen}RUN${cReset} ${cBold}]${cReset}"
+SET="${cBold}[ ${cBlue}SET${cReset} ${cBold}]${cReset}"
+ERROR="${cBold}[ ${cRed}ERROR${cReset} ${cBold}]${cReset}"
+NOTICE="${cBold}[ ${cYellow}NOTICE${cReset} ${cBold}]${cReset}"
+DONE="${cBold}[ ${cGreen}DONE${cReset} ${cBold}]${cReset}"
 
-FZF_SETTING="	--height 50% --border --extended --ansi --reverse --cycle --multi \
-		        --bind=ctrl-d:preview-page-down --bind=ctrl-u:preview-page-up \
-                --bind=ctrl-space:preview-page-down --bind=ctrl-z:preview-page-up --bind=ctrl-/:toggle-preview"
+function HEAD() { 
+	echo -e -n "${cBold}[ $1 ]${cReset}" 
+}
 
+function check_installed_package() {
+	$1 --version &>/dev/null
+}
+
+function show_how_install_fzf() {
+		echo -e "${NOTICE} Sorry. that function need ${cGreen}fzf${cReset} Package"
+		echo -e "  ================================================================="
+		echo -e "  - git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
+		echo -e "  - ~/.fzf/install"
+		echo -e "  ================================================================="
+}
+
+function shorten_path() {
+	local PATH=$(echo -e `pwd` | sed "s#${HOME}##g")
+	test x"${PATH}" == x && PATH="${cSky}HOME_${TIBET_PROJECT}"
+	echo $PATH
+}
+
+function get_fw_install_dir() {
+	# $1 : project name ( ex : a3, v8 )
+	if [ "$1" == "" ]
+	then
+		local project_name=$(echo -e ${TIBET_PROJECT} | tr [A-Z] [a-z])
+		if [ "${project_name}" == "a3" ]
+		then
+			echo -e -n "${HOME}/tftpboot/janus_a3/fw_install"
+		else
+			echo -e -n "${HOME}/tftpboot/gnet_${project_name}/fw_install"
+		fi
+	elif [ "$1" == "a3" ]
+	then
+		echo -e -n "${HOME}/tftpboot/janus_a3/fw_install"
+	else
+		echo -e -n "${HOME}/tftpboot/gnet_$1/fw_install"
+	fi
+}
+
+function get_install_dir() {
+	# $1 : project name ( ex : a3, v8 )
+	if [ "$1" == "" ]
+	then
+		local project_name=$(echo -e ${TIBET_PROJECT} | tr [A-Z] [a-z])
+		if [ "${project_name}" == "a3" ]
+		then
+			echo -e -n "${HOME}/install/janus_a3"
+		else
+			echo -e -n "${HOME}/install/gnet_${project_name}"
+		fi
+	elif [ "$1" == "a3" ]
+	then
+		echo -e -n "${HOME}/install/janus_a3"
+	else
+		echo -e -n "${HOME}/install/gnet_$1"
+	fi	
+}
+
+
+# ================================================================= #
+# 		                     fzf Utility	                  		#
+# ================================================================= #
+
+# base fzf setting
+FZF_SETTING="	--height 50%                        \
+                --border                            \
+                --extended                          \
+                --ansi                              \
+                --reverse                           \
+                --cycle                             \
+                --multi                             \
+		        --bind=ctrl-d:preview-page-down     \
+                --bind=ctrl-u:preview-page-up       \
+                --bind=ctrl-space:preview-page-down \
+                --bind=ctrl-z:preview-page-up       \
+                --bind=ctrl-/:toggle-preview"
+
+# fzf Functions
 function fzf_connect_vim() {
 	local pre_dir=`pwd`
-	local search_value="\x1b[33mNone Search Value"
+	local search_value="${cYellow}None Search Value${cReset}"
 	local search_time=`date +%H:%M:%S`
 	local search_list=()
 
-	echo -e "[ Run ] fzf-vim Utility By $1"
+	echo -n -e "${RUN} fzf-vim Utility By ${cYellow}$1${cReset} "
 
 	if [ "$1" == "Source_Dir" ]
 	then
@@ -32,10 +150,13 @@ function fzf_connect_vim() {
 		cd ~/
 	fi
 
+	echo -e "( ${cLine}$(pwd)${cReset} )"
+
+	# check grep word
 	if [ "$#" -eq 2 ]
 	then
 		search_value=$2 
-		echo -e "- grep : $2"
+		echo -e "${SET} grep -> ${cLine}$2${cReset}"
 		_file=$(rg -i --files-with-matches --no-messages "$2" | \
 				fzf ${FZF_SETTING} \
 				--preview "cat -n {} | rg -i --color always \"$2\"" \
@@ -46,14 +167,16 @@ function fzf_connect_vim() {
 				--header "[ Select the file you want to edit ]")
 	fi
 
+	# write log
 	search_list+=(${_file})
-	echo -e "[ \x1b[32m${search_value}\x1b[0m ] _${search_time}" >> ${HOME}/fzf_search_log.txt
+	echo -e "[ ${cGreen}${search_value}${cReset} ] _${search_time}" >> ${HOME}/fzf_search_log.txt
 	for i in ${!search_list[@]}
 	do
 		echo -e "-" ${search_list[i]} >> ${HOME}/fzf_search_log.txt
 	done
 	echo -e "" >> ${HOME}/fzf_search_log.txt
 
+	# open vim
 	if [ ! "${_file}" == "" ]
 	then
 		if [ "$#" -eq 2 ]
@@ -62,21 +185,23 @@ function fzf_connect_vim() {
 		else
 			vim -O ${_file}
 		fi
+	echo -e "${NOTICE} If you want to see the search history, enter the '${cYellow}fl${cReset}' command."
 	fi
 
 	cd ${pre_dir}
 }
 
 function fzf_connect_cd() {
-	pre_dir=`pwd`
-	cd ~/
+	local pre_dir=`pwd`
 
-	echo -e "[ Run ] fzf-cd Utility"
+	cd ~/
+	echo -e "${RUN} fzf-cd Utility in ${cLine}$(pwd)${cReset}"
+
 	if [ "$#" -eq 1 ]
 	then 
-		echo -e "- grep : $1"
-		_file=$(  rg -i --files-with-matches --no-messages "$1" |\
-		fzf ${FZF_SETTING}\
+		echo -e "${SET} grep -> ${cLine}$1${cReset}"
+		_file=$(rg -i --files-with-matches --no-messages "$1" |\
+				fzf ${FZF_SETTING}\
 				--preview "cat -n {} | rg -i --color always \"$1\""\
 				--header "[ Select Dir/File you want to move Dir ]")
 	else
@@ -91,12 +216,6 @@ function fzf_connect_cd() {
 	else
 		cd ${pre_dir}
 	fi
-}
-
-function shorten_path() {
-	local PATH=$(echo -e `pwd` | sed "s#${HOME}##g")
-	test x"${PATH}" == x && PATH="\e[1;36mHOME_${TIBET_PROJECT}"
-	echo $PATH
 }
 
 function show_fzf_search_log {
@@ -115,64 +234,44 @@ function show_fzf_search_log {
 	cat ~/fzf_search_log.txt | tail -n ${START_LINE}
 }
 
+# fzf Aliases
 alias ff='fzf_connect_vim Curr_Dir'
 alias ffs='fzf_connect_vim Source_Dir'
 alias ffa='fzf_connect_vim All_Dir'
 alias fcd='fzf_connect_cd'
 alias fl='show_fzf_search_log'
 
-alias sc='f() {
-			source ~/.bashrc;
-			echo -e "[ Source ~/.bashrc Complete ]";
-			}; f'
 
-alias x='exit'
-alias t='gnome-terminal'
-
-alias cds='cd ~/blackbox/source'
-alias cdss='cd ~/blackbox/system'
-alias cdu='cd ~/blackbox/util'
-alias Vim='vim -O'
-
-# ============================= #
-# 			mk Tool.			#
-# ============================= #
+# ================================================================= #
+#                              Mk Tool                              #
+# ================================================================= #
 
 # Option
 AUTO_DIR_COPY=Y
-AUTO_NFS_DETECT=Y
+AUTO_NFS_DETECT=N
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.7
-LAST_UPDATE=2021-12-14
+MK_VERSION=1.2.8
+LAST_UPDATE=2021-12-28
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
-
-ERROR='[ \x1b[31mERROR\x1b[0m ]'
-NOTICE='[ \x1b[33mNOTICE\x1b[0m ]'
 
 TEMP_BACKUP_CONFILICT_FILES="${HOME}/blackbox/tempBackupConflict"
 
 NFS_IP='192.168.0.200'
-LAST_BACKUP_DATE=0630
-LAST_BACKUP_HOUR=11
+LAST_BACKUP_DATE=1228
+LAST_BACKUP_HOUR=09
 
 FTP_ID=so686so
 FTP_PW=1663
 ROOT_PW=
 
-cRed='\x1b[31m'
-cGreen='\x1b[32m'
-cYellow='\x1b[33m'
-cSky='\x1b[36m'
-cReset='\x1b[0m'
-
 # Set option when 'source ~/.bashrc'
 if [ "${CHANGE_PROMPT}" == "Y" ]
 then
-	PS1="\[\e[1;37m\][ \[\e[1;32m\]\$(echo -e \$(shorten_path))\[\e[0m\] \[\e[1;37m\]]\[\e[0m\] \[\e[37m\]> \[\e[0m\]"
+	PS1="\[${cBold}${cWhite}\][ \[${cGreen}\]\$(echo -e \$(shorten_path))\[\] \[${cWhite}\]]\[${cReset}\] \[${cWhite}\]> \[${cReset}\]"
 else
 	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -256,8 +355,8 @@ function version_change_to_upload() {
 }
 
 function version_info() {
-	echo -e "[ Version ] \t: ${MK_VERSION}"
-	echo -e "[ Last Update ] : ${LAST_UPDATE}"
+	echo -e "`HEAD Version` \t: ${MK_VERSION}"
+	echo -e "`HEAD Last_Update` : ${LAST_UPDATE}"
 }
 
 function change_project_by_bashrc() {
@@ -277,14 +376,14 @@ function change_project_by_bashrc() {
 
 function change_project() {
 	local check_value="false"
-	local PRE_PROJECT=$(project_version_name | tr [a-z] [A-Z])
-	echo -e "\n[ Current Project : ${cYellow}${PRE_PROJECT}${cReset} ]"
-
+	local PRE_PROJECT=${TIBET_PROJECT}
 	local LIST=(${PROJECT_LIST[@]})
 
 	local is_valid_arg="false"
 	local temp_select=""
 	local SELECT_PROJECT=""
+
+	echo -e "\n[ Current Project : ${cYellow}${PRE_PROJECT}${cReset} ]"
 
 	# Check Var is valid
 	if [ $# -ge 1 ]
@@ -331,13 +430,13 @@ function change_project() {
 	fi
 
 	# Change Setting
-	echo -e " - Change setting : bashrc..."
+	echo -e " - Change setting : .bashrc"
 	change_project_by_bashrc ${SELECT_PROJECT}
 	echo -e " - ${cYellow}${PRE_PROJECT}${cReset} -> ${cGreen}${SELECT_PROJECT}${cReset}"
 
 	SELECT_PROJECT=$(echo -e ${SELECT_PROJECT} | tr [A-Z] [a-z])
 
-	echo -e " - Change setting : project_change.sh : ${SELECT_PROJECT}"
+	echo -e " - Change setting : project_change.sh -> ${SELECT_PROJECT}"
 	cd ~/blackbox
 	./project_change.sh ${SELECT_PROJECT}
 	echo -e " - Change Done."
@@ -349,8 +448,7 @@ function change_project() {
 }
 
 function show_mkapp_list() {
-	local PROJECT_NAME=$(project_version_name | tr [a-z] [A-Z])
-	echo -e "\n${cYellow}[ Current Project : ${PROJECT_NAME} ]${cReset}"
+	local PROJECT_NAME=${TIBET_PROJECT}
 
 	local START_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'case $1 in' | awk -F ':' '{print $1}')
 	local END_LINE=$(wc -l ~/blackbox/system/mk_app.sh | awk -F ' ' '{print $1}')
@@ -359,9 +457,17 @@ function show_mkapp_list() {
 	local SUBS=$(( ${END_LINE} - ${START_LINE} + 1 ))
 	local TAIL_CUT=$(( ${LIST_LINE} - ${START_LINE} ))	#HC
 
+	echo -e "\n${cYellow}[ Current Project : ${PROJECT_NAME} ]${cReset}"
+
 	if [ ! "$1" == "" ]
 	then
-		cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT} | grep -i $1
+		if [ ! "$1" == "title" ]
+		then
+			cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT} | grep -i $1
+		else
+			echo -e "${SET} Only Show Title"
+			extract_mkapp_list
+		fi
 	else
 		cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT}
 	fi
@@ -378,6 +484,7 @@ function setting_option() {
 	local OPT_LIST=( "AUTO_DIR_COPY" "AUTO_NFS_DETECT" "AUTO_BACKUP" "CHANGE_PROMPT" "IMPROVED_AUTO_COMPLETE" "Exit" )
 	local opt_line=""
 	local opt_value=""
+	local separator="|"
 
     local DETAIL_INFO_LIST=( \
         "- Create FW directory in home directory.\n- Automatically copies the .arm file generated by 'mk' to the ${cYellow}~/FW${cReset} directory." \
@@ -395,8 +502,17 @@ function setting_option() {
 		do
 			opt_line=$(get_line_option ${OPT_LIST[$n]})
 			opt_value=$(get_value_option ${OPT_LIST[$n]})
+			separator="|"
+
+			if [ "${choice_num}" -eq $n ]
+			then
+				echo -e -n "${cBold}"
+				separator=">"
+			fi
+
 			test "${opt_value}" == "Y" && printf "${cGreen}"
-			echo -e "$n ) ${OPT_LIST[$n]}" 
+			test "${opt_value}" == "N" && printf "${cDim}"
+			echo -e "$n ${separator} ${OPT_LIST[$n]}" 
 			printf "${cReset}"
 		done
 		echo -e "-------------------------------------------------------------------------------"
@@ -404,11 +520,11 @@ function setting_option() {
         then
             echo -e "* No number has been entered yet.\n-\n-"
         else
-            echo -e "* ${OPT_LIST[$choice_num]}"
+            echo -e "${cBold}* ${OPT_LIST[$choice_num]}${cReset}"
             echo -e "${DETAIL_INFO_LIST[$choice_num]}"
         fi
 		echo -e "== [ Option ] ================================================================="
-		printf "Enter the number of options you want to enable/disable : "
+		printf "Enter the number of options you want to ${cGreen}enable${cReset}/${cDim}disable${cReset} : "
 
 		read choice_num
 
@@ -435,11 +551,7 @@ function setting_option() {
 		cd ~
 		source ~/.bashrc
 	done
-	echo -e "\n[ mk Option Setting Done. ]\n"
-}
-
-function check_installed_package() {
-	$1 --version &>/dev/null
+	echo -e "\n${DONE} mk Option Setting Done.\n"
 }
 
 function send_file_to_nfs() {
@@ -451,14 +563,14 @@ function send_file_to_nfs() {
 	local COPY_DIR=""
 
 	# Set To. Dir
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
-	else
-		INS_DIR="${HOME}/tftpboot/gnet_${PROJECT_NAME}/fw_install"
-	fi
+	INS_DIR=$(get_fw_install_dir ${PROJECT_NAME})
+
+	# Set From. Dir
+	COPY_DIR=$(get_install_dir ${PROJECT_NAME})
 
 	cd ${INS_DIR}
+
+	echo -e "${RUN} .arm file : fw_install -> ${cLine}${COPY_DIR}${cReset}"
 
 	# Set Target File
 	if [ $(ls -l | grep ${CUR_DATE}\.arm$ | wc -l) -ge 2 ]
@@ -468,7 +580,7 @@ function send_file_to_nfs() {
 		then
 			SELECT_FILE=`ls -t | grep ${CUR_DATE}\.arm$ | head -n 5 | \
 						fzf --cycle --height 10% --reverse --border \
-							--header "[ Choice file to move ./janus ]"`
+							--header "[ Choice file to copy ./janus ]"`
 		else
 			local FILE_LIST=(	$(ls -t | grep \.arm$ | awk "NR==1") \
 								$(ls -t | grep \.arm$ | awk "NR==2") \
@@ -476,7 +588,7 @@ function send_file_to_nfs() {
 								"Not Copy File" )
 
 			echo -e "[ More than one file in fw_install dir. ]"
-			echo -e "${cYellow}[ Choice file to move ./janus ]${cReset}"
+			echo -e "${cYellow}[ Choice file to copy ./janus ]${cReset}"
 			select var in "${FILE_LIST[@]}"
 			do
 				SELECT_FILE="${var}"
@@ -490,25 +602,17 @@ function send_file_to_nfs() {
 
 	if [ "${SELECT_FILE}" == "Not Copy File" -o "${SELECT_FILE}" == "" ]
 	then
-		echo -e "\n - Cancel File Copy to ./janus"
+		echo -e "- Cancel File Copy to ./janus"
 		return
 	fi
 
-	# Set From. Dir
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		COPY_DIR="janus_a3"
-	else
-		COPY_DIR="gnet_${PROJECT_NAME}"
-	fi
-
-	cd ${HOME}/install/${COPY_DIR}
+	cd ${COPY_DIR}
 	if [ $(ls -l | grep \.arm$ | wc -l) -gt 0 ]
 	then
 		rm *.arm
 	fi
 
-	cp -a ${INS_DIR}/${SELECT_FILE} ~/install/${COPY_DIR}
+	cp -a ${INS_DIR}/${SELECT_FILE} ${COPY_DIR}
 
 	if [ $? -gt 0 ]
 	then
@@ -516,7 +620,7 @@ function send_file_to_nfs() {
 		return
 	fi
 
-	echo -e "\n[ Done ] File Copy ./janus for NFS : ${cGreen}${SELECT_FILE}${cReset}"
+	echo -e "${DONE} file copy done : ${cGreen}${SELECT_FILE}${cReset}"
 }
 
 function change_backup_date() {
@@ -533,34 +637,39 @@ function change_backup_date() {
 	source ~/.bashrc
 }
 
-function git_backup() {
+function git_stash_save_backup_file() {
+	echo -e ${RUN} "git_stash_save_backup_file start"
 	cd ~/blackbox/source
 
 	if [ "$(git stash list | grep "mkBackUp" | wc -l)" -eq 1 ]
 	then
-		echo -e "\n[ Stash BackUp file Already Exist. It will be replaced by the latest backup file. ]\n"
+		echo -e "\n${NOTICE} Stash BackUp file Already Exist. It will be replaced by the latest backup file."
 		STASH_NUM=`git stash list | grep "mkBackUp" | awk -F ':' '{print $1}'`
 		git stash drop ${STASH_NUM}
 	fi
 
+	echo -e "\n"${RUN}  "mkBackUp ---------> Git Stash"
 	git stash save "mkBackUp"
 	STASH_NUM=`git stash list | grep "mkBackUp" | awk -F ':' '{print $1}'`
+	echo -e ${DONE} "git stash save done\n"
 
-	git stash apply ${STASH_NUM}
+	echo -e ${NOTICE} "Current Saved CodeLine"
+	git stash show ${STASH_NUM}
 
-	echo -e "\n[ BackUp Complete. If you want load backup file, press ${cGreen}'mk load'${cReset} ]\n"
+	echo -e "\n"${RUN}  " reload  <--------- Git Stash"
+	git stash apply -q ${STASH_NUM}
+	echo -e "${DONE} BackUp Complete. If you want load backup file, press ${cGreen}'mk load'${cReset}\n"
 
 	change_backup_date
 }
 
-function git_backup_load() {
+function git_stash_apply_backup_file() {
+	echo -e ${RUN} "git_stash_apply_backup_file start\n"
 	cd ~/blackbox/source
-
-	echo -e "\n[ Stash BackUp file load... ]\n"
 
 	if [ "$(git stash list | grep "mkBackUp" | wc -l)" -eq 0 ]
 	then
-		echo -e "\n[ Stash BackUp file Not Exist. Load process exit. ]\n"
+		echo -e "\n${ERROR} Stash BackUp file Not Exist. Load process exit.\n"
 		return
 	fi
 
@@ -573,10 +682,13 @@ function git_backup_load() {
 	git stash save "TEMP"
 
 	STASH_NUM=`git stash list | grep "mkBackUp" | awk -F ':' '{print $1}'`
+	echo -e "\n"${RUN} "apply  <--------- Git Stash"
+	git stash apply -q ${STASH_NUM}
 
-	git stash apply ${STASH_NUM}
+	echo -e ${NOTICE} "Load Code Summary"
+	git stash show ${STASH_NUM}
 
-	echo -e "\n[ BackUp file load complete ]\n"
+	echo -e "${DONE} BackUp file load complete.\n"
 }
 
 function make_update_file() {
@@ -584,7 +696,7 @@ function make_update_file() {
 	local _option=" "
 	local _project_name=$(project_version_name)
 
-	echo -e "\n[ Run : make_update_file ]"
+	echo -e "\n${RUN} make_update_file"
 
     local valid_model_list=($(extract_mkapp_list))
     local valid_model_value="false"
@@ -617,7 +729,7 @@ function make_update_file() {
 		then
 			if [ -d "${HOME}/FW" ]
 			then
-				echo -e "[ Running... ] reset FW dir."
+				echo -e "${SET} reset FW dir."
 				cd ~/FW
 				if [ $(ls -l | grep \.arm$ | wc -l) -gt 0 ]
 				then
@@ -635,10 +747,10 @@ function make_update_file() {
 			local CUR_BACKUP_DATE=`date +%m%d`
 			local CUR_BACKUP_HOUR=`date +%k`
 
-			echo -e "[ Running... ] Auto backup option."
+			echo -e "${SET} Auto backup option."
 			if [ ! "${LAST_BACKUP_DATE}" == "${CUR_BACKUP_DATE}" ] || [ ! "${LAST_BACKUP_HOUR}" == "${CUR_BACKUP_HOUR}" ]
 			then
-				git_backup
+				git_stash_save_backup_file
 
 				if [ $? -gt 0 ]
 				then
@@ -646,7 +758,7 @@ function make_update_file() {
 					break
 				fi
 
-				echo -e "[ Done ] Auto backup done."
+				echo -e "${DONE} Auto backup done."
 
 			else
 				echo -e ${cGreen}"* Already backed up within an hour"${cReset}
@@ -656,7 +768,7 @@ function make_update_file() {
 
 		cd ~/blackbox/source
 
-		echo -e "[ Running... ] make${_option}install.\n"
+		echo -e "${RUN} make${_option}install.\n"
 		make${_option}install
 		
 		if [ $? -gt 0 ]
@@ -665,11 +777,11 @@ function make_update_file() {
 			return
 		fi
 
-		echo -e "\n\n\n[ Done ] make${_option}install."
+		echo -e "\n\n${DONE} make${_option}install."
 	fi
 
 	cd ~/blackbox/system
-	echo -e "[ Running... ] mk_app.sh${cGreen}" $1 "${cReset}\n\n"
+	echo -e "${RUN} mk_app.sh${cGreen}" $1 "${cReset}\n\n"
 	./mk_app.sh "$1"
 	
 	if [ $? -gt 0 ]
@@ -678,24 +790,21 @@ function make_update_file() {
 		return
 	fi
 
-	echo -e "\n\n[ Done ] F/W update File (${cGreen} $1 ${cReset}) make Done."
-	echo -e "[ PROJECT NAME ] :" ${_project_name} | tr [a-z] [A-Z]
+	local make_name="Default"
+	test "$1" == "." || make_name=$1
+
+	echo -e "\n\n${DONE}\tF/W update File (${cGreen} ${make_name} ${cReset}) make Done."
+	echo -e "`HEAD PROJECT`\t"${TIBET_PROJECT}
 
 	local CUR_DATE=`date +%Y%m%d`
 	local INS_DIR=""
 
-	echo -e "[ MAKE TIME ] : "`date`
+	echo -e "`HEAD MAKE_TIME`\t"`date`
 
 	# Auto copy file to ~/FW ( when option : Y )
 	if [ "${AUTO_DIR_COPY}" == "Y" ]
 	then
-		if [ "${_project_name}" == "a3" ]
-		then
-			INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
-		else
-			INS_DIR="${HOME}/tftpboot/gnet_${_project_name}/fw_install"
-		fi
-
+		INS_DIR=$(get_fw_install_dir ${_project_name})
 		cd ${INS_DIR}
 
 		if [ $(ls -l | grep ${CUR_DATE}\.arm$ | wc -l) -ge 2 ]
@@ -716,7 +825,7 @@ function make_update_file() {
 			return
 		fi		
 
-		echo -e "[ Done ] File Copy to '~/FW' Direcotry.\n"
+		echo -e "${DONE}\tFile Copy to '~/FW' Direcotry.\n"
 	fi
 
 	# Auto copy file to ~install ( ./janus ) 
@@ -737,10 +846,10 @@ function make_update_file_help() {
 	resize -s 50 ${COLUMNS} >/dev/null
 
 	echo -e "\n== [ HELP ] =================================================================\n"
-	echo -e " * ${cSky}mk list${cReset} 	: Show mk_app.sh list at Current Project"
+	echo -e " * ${cSky}mk list${cReset} 	: Show mk_app.sh list at Current Project ( also '${cSky}mk ?${cReset}' )"
 	echo -e " * ${cSky}mk setting${cReset} 	: Change & Adjust project"
 	echo -e " * ${cSky}mk option${cReset} 	: Setting mk Tool option"
-	echo -e " * ${cSky}mk update${cReset} 	: Update mkTool with latest file from NAS"
+	echo -e " * ${cSky}mk update${cReset} 	: Update mkTool with latest file from git"
 	echo -e "\n ---------------------------------------------------------------------------\n"
 	echo -e " * ${cSky}mk [<Option>] [<model>] [<Sub Option>]${cReset}\n"
 	echo -e " # Make install & Create f/w update file(.arm) at ${cYellow}Once${cReset}"
@@ -764,13 +873,13 @@ function make_update_file_help() {
 	echo -e "\n ---------------------------------------------------------------------------\n"
 	echo -e " * mk clear\t: Clear the '~/tftpboot/../fw_install' in Current Project"
 	echo -e " * mk store\t: Backup the '../fw_install' in Current Project"
-	echo -e " * mk open\t: Open the '../fw_install' in Current Project or Other Dir."
-	echo -e " * mk upp\t: sudo apt update & upgrade at once"
+	echo -e " * ${cYellow}mk open${cReset}\t: Open the '../fw_install' in Current Project or Other Dir."
+	echo -e " * ${cYellow}mk upp${cReset}\t: sudo apt update & upgrade at once"
 	echo -e " * mk version\t: View version information"
 	echo -e " * mk patch_log\t: View the patch log"
 	echo -e " * mk sd_copy\t: Copy the most recent arm file to the mounted SD card"
-	echo -e " * mk pull\t: Git pull Current Project"
-	echo -e " * mk kill\t: Close all terminals except the process is running"
+	echo -e " * ${cYellow}mk pull${cReset}\t: Git pull Current Project"
+	echo -e " * ${cYellow}mk kill${cReset}\t: Close all terminals except the process is running"
 
     echo -e "\n== [ HELP ] =================================================================\n"
 }
@@ -784,19 +893,14 @@ function mk_open_dir() {
 		if [ "$1" == "FW" ]
 		then
 			nautilus ${HOME}/FW
+			return
 		else
 			nautilus $1
 			return
 		fi
 	fi
 
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
-	else
-		INS_DIR="${HOME}/tftpboot/gnet_${PROJECT_NAME}/fw_install"
-	fi
-
+	INS_DIR=$(get_fw_install_dir ${PROJECT_NAME})
 	nautilus ${INS_DIR}
 }
 
@@ -862,9 +966,9 @@ function run_git_pull() {
 	local PROJECT_NAME=$1
 	local Pull_Dir="${HOME}/blackbox/${PROJECT_NAME}"
 
-	printf "[ Run ] Git Pull - ${cGreen}"
+	echo -n -e "${RUN} Git Pull - ${cGreen}"
 	echo -e ${PROJECT_NAME} | tr [a-z] [A-Z]
-	printf ${cReset}
+	echo -n -e ${cReset}
 
 	cd ${Pull_Dir}
 	git pull
@@ -881,7 +985,7 @@ function manage_git_pull() {
 	if [ "${args}" == "" ]
   	then
     	run_git_pull ${PROJECT_NAME}
-		echo -e "[ Done ] Git Pull\n"
+		echo -e "${DONE} Git Pull\n"
     	return
   	fi
 
@@ -895,7 +999,7 @@ function manage_git_pull() {
 			run_git_pull v3
 			run_git_pull v8
 			run_git_pull util
-			echo -e "[ Done ] Git Pull\n"
+			echo -e "${DONE} Git Pull\n"
 			return
 		fi
 
@@ -907,7 +1011,7 @@ function manage_git_pull() {
 			fi
 		done 
   	done
-	echo -e "[ Done ] Git Pull\n"
+	echo -e "${DONE} Git Pull\n"
 }
 
 function fw_install_dir_backup() {
@@ -919,16 +1023,10 @@ function fw_install_dir_backup() {
 	local BACKUP_DIR="${INS_DIR}/${CUR_DATE}"
 
 	# Set To. Dir
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
-	else
-		INS_DIR="${HOME}/tftpboot/gnet_${PROJECT_NAME}/fw_install"
-	fi
-
+	INS_DIR=$(get_fw_install_dir ${PROJECT_NAME})
 	BACKUP_DIR="${INS_DIR}/${CUR_DATE}"
 
-	echo -e "[ Running... ] Backup arm file in fw_install dir"
+	echo -e "${RUN} Backup arm file in fw_install dir"
 
 	if [ -d ${BACKUP_DIR} ]
 	then
@@ -946,13 +1044,13 @@ function fw_install_dir_backup() {
 		return
 	fi		
 
-	echo -e "\n[ Done ] File Move to ${cGreen}${BACKUP_DIR}${cReset} Directory.\n"
+	echo -e "\n${DONE} File Move to ${cGreen}${BACKUP_DIR}${cReset} Directory.\n"
 }
 
 function update_mk_file() {
 	local pre_dir=`pwd`
 
-	echo -e "\n[ Run : mk Tool Update ]"
+	echo -e "\n${RUN} mk Tool Update"
 
 	cd ~
 	cp ~/.bash_aliases ~/.bash_aliases_backUp
@@ -972,6 +1070,8 @@ function update_mk_file() {
 		return
 	fi
 
+	echo -e "${SET} Extract and save locally saved options"
+
 	for (( i=0; i<${opt_len}; i++ ));
 	do
 		temp_value=$(get_backup_value_option ${BACKUP_FLAG[$i]})
@@ -983,6 +1083,8 @@ function update_mk_file() {
 		rm -rf ${HOME}/blackbox/MkTool
 	fi
 
+	echo -e "${RUN} Git Clone - MkTool"
+
 	cd ${HOME}/blackbox
 	git clone https://github.com/so686so/MkTool.git
 	cd MkTool
@@ -992,10 +1094,12 @@ function update_mk_file() {
 
 	if [ $? -gt 0 ]
 	then
-		echo -e "[ ${ERROR} Update Failed. Roll Back .bash_aliases file ]"
+		echo -e "${ERROR} Update Failed. Rollback .bash_aliases file."
 		mv ~/.bash_aliases_backUp ~/.bash_aliases
 		return
 	fi
+
+	echo -e "${SET} Applies the temporary saved local storage variable to the newly received file."
 
 	for (( i=0; i<${opt_len}; i++ ));
 	do
@@ -1008,19 +1112,21 @@ function update_mk_file() {
 		sed -i "${BACKUP_OPTION_LINE[$i]}s/.*/${BACKUP_FLAG[$i]}=${BACKUP_OPTION_VALUE[$i]}/g" ~/.bash_aliases
 	done
 
+	echo -e "${DONE} Applies done."
+
 	cd ~
-	echo -e "[ Running... ] Remove temp MkTool Dir"
+	echo -e "${RUN} Remove temp MkTool Dir"
 	rm -rf ${HOME}/blackbox/MkTool
 
-	echo -e "[ Running... ] Meld Backup .bash_aliases & .bash_completion"
+	echo -e "${RUN} Meld Backup .bash_aliases & .bash_completion"
 	meld .bash_aliases .bash_aliases_backUp
 	meld .bash_completion .bash_completion_backUp
 
-	echo -e "[ Running... ] Autocomplete script being applied to root directory"
+	echo -e "${RUN} Autocomplete script being applied to root directory"
 	source ~/.bashrc
 
-	echo -e "[ Done ] Autocomplete script being applied done."
-	echo -e "[ Done ] mk Tool Update Complete\n"
+	echo -e "${DONE} Autocomplete script being applied done."
+	echo -e "${DONE} mk Tool Update Complete\n"
 
 	cd ${pre_dir}
 }
@@ -1028,8 +1134,8 @@ function update_mk_file() {
 function check_root_pw() {
 	if [ "${ROOT_PW}" == "" ]
 	then
-		printf "* Please input your root passwd : "
-		read
+		printf "* Please input your root password : "
+		read -s
 		local PW_LINE_=$(get_line_option ROOT_PW)
 		sed -i "${PW_LINE_}s/.*/ROOT_PW=${REPLY}/g" ~/.bash_aliases
 		cd ~
@@ -1052,11 +1158,11 @@ function upload_mkTool() {
 
 	git push
 
-	echo -e "[ Done ] Upload Done : <${MK_VERSION}> ${patch_log_comment}"
+	echo -e "${DONE} Upload Done : <${MK_VERSION}> ${patch_log_comment}"
 }
 
 function update_package_version() {
-	echo -e "\n[ Run ] Package Update "
+	echo -e "\n${RUN} Package Update "
 
 	check_root_pw
 
@@ -1072,17 +1178,15 @@ function update_package_version() {
 		echo "${ROOT_PW}" | sudo -kS snap refresh
 	fi
 
-	echo -e "\n[ Done ] Package Update Done\n"
+	echo -e "\n${DONE} Package Update Done\n"
 }
 
 function setting_nfs() {
-	echo -e "\n[ Run ] NFS Setting \n"
+	echo -e "\n${RUN} NFS Setting ( ${TIBET_PROJECT} )\n"
 	check_installed_package fzf
 	if [ $? -gt 0 ]
 	then
-		echo -e "${NOTICE} : Sorry. that function need ${cGreen}fzf${cReset} Package"
-		echo -e "- git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
-		echo -e "- ~/.fzf/install"
+		show_how_install_fzf
 		return
 	fi
 
@@ -1091,12 +1195,7 @@ function setting_nfs() {
 	local SELECT_VALUE=""
 
 	# Set Dir
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		NFS_DIR="${HOME}/install/janus_a3"
-	else
-		NFS_DIR="${HOME}/install/gnet_${PROJECT_NAME}"
-	fi
+	NFS_DIR=$(get_install_dir ${PROJECT_NAME})
 
 	cd ${NFS_DIR}/pack
 	SELECT_FILE=`find . -maxdepth 1 -type d | \
@@ -1105,13 +1204,13 @@ function setting_nfs() {
 
 	if [ "${SELECT_FILE}" == "" ]
 	then
-		echo -e "- setting nfs cancel"
+		echo -e "${NOTICE} setting nfs cancel"
 		return
 	fi
 
 	cd ${SELECT_FILE}
 	cp -a * ../..
-	echo -e "[ Copy : oem.ini ]"
+	echo -e "${SET} ${cSky}oem.ini${cReset} ( ${cLine}${SELECT_FILE}${cReset} ) copy"
 
 	cd ${NFS_DIR}/skin
 	SELECT_FILE=`find . -maxdepth 1 -type d | \
@@ -1120,35 +1219,33 @@ function setting_nfs() {
 
 	if [ "${SELECT_FILE}" == "" ]
 	then
-		echo -e "- setting nfs cancel"
+		echo -e "${NOTICE} setting nfs cancel"
 		return
 	fi
 
 	cd ${SELECT_FILE}
 	cp -a * ./..
-	echo -e "[ Copy : Model skin ]"	
+	echo -e "${SET} ${cSky}Model Skin${cReset} ( ${cLine}${SELECT_FILE}${cReset} ) copy"
 
 	if [ "${PROJECT_NAME}" == "v3" ]
 	then
 		cd ${NFS_DIR}/language/gnet/
 		cp -a * ./..
-		echo -e "[ Copy : gnet Langugae ]"
+		echo -e "${SET} ${cSky}Language${cReset} ( ${cLine}${SELECT_FILE}${cReset} ) copy"
 	fi
 
-	echo -e "\n[ Done ] NFS Setting Done\n"
+	echo -e "\n${DONE} NFS Setting Done\n"
 }
 
 function sd_copy_file() {
 	check_installed_package fzf
 	if [ $? -gt 0 ]
 	then
-		echo -e "${NOTICE} : Sorry. that function need ${cGreen}fzf${cReset} Package"
-		echo -e "- git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
-		echo -e "- ~/.fzf/install"
+		show_how_install_fzf
 		return
 	fi
 
-	echo -e "\n[ Run ] Copy file to SD card\n"
+	echo -e "\n${RUN} Copy file to SD card\n"
 
 	local SD_PATH=""
 	local SD_NUM=`df -h | grep "sd" | grep -v "/$" | wc -l`
@@ -1165,20 +1262,14 @@ function sd_copy_file() {
 	fi
 
 	SD_PATH=`echo ${SD_PATH} | awk -F ' ' '{printf $6}'`
-	echo -e "[ Running... ] SD card Path - ${SD_PATH}"
+	echo -e "${RUN} SD card Path - ${SD_PATH}"
 
 	local INS_DIR=""
 	local CUR_DATE=`date +%Y%m%d`
 	local PROJECT_NAME=$(project_version_name)
 	local SELECT_FILE=""
 
-	if [ "${PROJECT_NAME}" == "a3" ]
-	then
-		INS_DIR="${HOME}/tftpboot/janus_a3/fw_install"
-	else
-		INS_DIR="${HOME}/tftpboot/gnet_${PROJECT_NAME}/fw_install"
-	fi
-
+	INS_DIR=$(get_fw_install_dir ${PROJECT_NAME})
 	cd ${INS_DIR}
 
 	# Set Target File
@@ -1193,7 +1284,7 @@ function sd_copy_file() {
 
 	if [ "${SELECT_FILE}" == "" ]
 	then
-		echo -e "\n - Cancel File Copy to SD disk"
+		echo -e "\n${NOTICE} Cancel File Copy to SD disk"
 		return
 	fi
 
@@ -1202,7 +1293,7 @@ function sd_copy_file() {
 		mkdir "${SD_PATH}/update"
 	fi
 
-	echo -e "- Copying..."
+	echo -e "${RUN} Copying..."
 	cp -av ${SELECT_FILE} "${SD_PATH}/update"
 
 	if [ $? -gt 0 ]
@@ -1211,9 +1302,9 @@ function sd_copy_file() {
 		return
 	fi
 
-	echo -e "\n- Unmount SD card : ${SD_PATH}"
+	echo -e "\n${RUN} Unmount SD card : ${SD_PATH}"
 	umount ${SD_PATH}
-	echo -e "- Unmount SD card Done"
+	echo -e "${DONE} Unmount SD card Done"
 
 	if [ $? -gt 0 ]
 	then
@@ -1221,7 +1312,7 @@ function sd_copy_file() {
 		return
 	fi
 	
-	echo -e "\n[ Done ] Copy file ${cGreen}${SELECT_FILE}${cReset} to SD card Done"
+	echo -e "\n${DONE} Copy file ${cGreen}${SELECT_FILE}${cReset} to SD card Done"
 	echo -e "${NOTICE} Please Uncheck Vbox Menu - USB\n"
 }
 
@@ -1234,12 +1325,12 @@ function kill_all_terminal() {
 	PID_LIST+=($(ps -efc | grep "bash$" | awk '{print $2}'))
 	PPID_LIST+=($(ps -efc | grep "bash$" | awk '{print $3}'))
 
-	echo -e "\n[ Run ] Kill all Terminal\n"
+	echo -e "\n${RUN} Kill all Terminal\n"
 
 	if [ ! "$1" == "all" ]
 	then
 		echo -e "${NOTICE} Safe Mode : The terminal where the process is running is not killed."
-		echo -e "- If you want to kill all terminal, use '${cYellow}mk kill all${cReset}'\n"
+		echo -e "${NOTICE} If you want to kill all terminal, use '${cYellow}mk kill all${cReset}'\n"
 		RUN_LIST+=($(ps -efc | grep "pts" | grep -v "bash$" | grep -v $$ | awk '{print $3}'))
 
 		for i in ${!RUN_LIST[@]}
@@ -1284,9 +1375,10 @@ function kill_all_terminal() {
         echo -e "- Kill Terminal ${count} [ ${cYellow}${PID_LIST[i]}${cReset} ]"
     done
 
+	echo -e
 	killall nautilus
 
-    echo -e "\n[ Done ] Kill all Terminal & Folder\n"
+    echo -e "\n${DONE} Kill all Terminal & Folder\n"
 }
 
 function show_info() {
@@ -1309,7 +1401,7 @@ function check_inDir_size() {
 	local SELECT_DIR=""
 	local pre_dir=`pwd`
 
-	echo -e "\n[ Run : check_inDir_size ]"
+	echo -e "\n${RUN} check_inDir_size"
 
 	if [ $# -eq 1 ]
 	then
@@ -1359,11 +1451,12 @@ function solve_gitPull_conflict() {
 	local check_format='\.c|makefile|\.ini|\.h'
 	local prevFile=""
 	local fixedFile=""
-	local CUR_PROJECT=$(project_version_name | tr [a-z] [A-Z])
+
+	local CUR_PROJECT=${TIBET_PROJECT}
 	local PROJECT_NAME=$(project_version_name)
 	local rootDir=`echo -e ${HOME}/blackbox/${PROJECT_NAME}`
 
-	echo -e "\n[ Run : solve_gitPull_conflict ]"
+	echo -e "\n${RUN} solve_gitPull_conflict"
 	echo -e "${NOTICE} You Need Match Project to SolveConflict [ Cur : ${cYellow}${CUR_PROJECT}${cReset} ]"
 	echo -e "( Tab : Choose File / Enter : Finish Choose File / Esc : Exit )"
 
@@ -1375,7 +1468,7 @@ function solve_gitPull_conflict() {
 
 	if [ ! -d "${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}" ]
 	then
-		echo -e "* Create BackupDir : ${cGreen}${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}${cReset}"
+		echo -e "${SET} Create BackupDir : ${cGreen}${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}${cReset}"
 		mkdir ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}
 	fi
 
@@ -1386,7 +1479,7 @@ function solve_gitPull_conflict() {
 
 	moveList+=(${selectFile})
 
-	echo -e "\n* Move ${#moveList[@]} Files"
+	echo -e "\n${RUN} Move ${#moveList[@]} Files"
 
 	if [ "${#moveList[@]}" == "0" ]
 	then
@@ -1429,7 +1522,7 @@ function solve_gitPull_conflict() {
 		fi
 	done
 
-	echo -e "\n[ Done ] solve_gitPull_conflict\n"
+	echo -e "\n${DONE} solve_gitPull_conflict\n"
 	cd ${pre_dir}
 }
 
@@ -1468,9 +1561,10 @@ function open_git_cola() {
 	else
 		SELECT_PROJECT=$(project_version_name)
 	fi
+
+	echo -e "${RUN} open_git_cola [ ${cYellow}$SELECT_PROJECT${cReset} ]"
 	
 	git-cola -r ${HOME}/blackbox/${SELECT_PROJECT}
-
 }
 
 function make_update_file_tool() {
@@ -1545,10 +1639,10 @@ function make_update_file_tool() {
 				change_project $2
 				;;
 			bu | backup)
-				git_backup
+				git_stash_save_backup_file
 				;;
 			load)
-				git_backup_load
+				git_stash_apply_backup_file
 				;;
 			opt | -o | option)
 				setting_option
@@ -1620,8 +1714,30 @@ function make_update_file_tool() {
 
 alias mk='make_update_file_tool'
 
-# Personal Function
 
+# ================================================================= #
+#                          Global Aliases                           #
+# ================================================================= #
+
+alias sc='f() {
+			source ~/.bashrc;
+			echo -e "${DONE} Source ~/.bashrc Complete "; }; f'
+
+alias x='exit'
+alias t='gnome-terminal'
+
+alias cds='cd ~/blackbox/source'
+alias cdss='cd ~/blackbox/system'
+alias cdk='cd ~/blackbox/system/kernel'
+alias cdu='cd ~/blackbox/util'
+alias Vim='vim -O'
+
+# alias st='strip_file'
+alias get_idf='. $HOME/ESP/esp-idf/export.sh'
+alias get_42_if='. $HOME/ESP/esp_4_2/esp-idf/export.sh'
+alias mm='make clean; make; make install;'
+
+# Personal Function
 strip_file() {
 	local FileList=()
 	FileList+=($(ls -R))
@@ -1652,7 +1768,3 @@ strip_file() {
 		VAR=
 	done
 }
-
-# alias st='strip_file'
-alias get_idf='. $HOME/ESP/esp-idf/export.sh'
-alias mm='make clean; make; make install;'
