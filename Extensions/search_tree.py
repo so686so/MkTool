@@ -212,6 +212,7 @@ class BlackBoxTree:
         
     def show_by_depth(self):
         DFLT_NAME_LEN   = 60
+        SKIP_LEN        = DFLT_NAME_LEN * (1/2)
         DFLT_DASH_LEN   = 100
         forLen          = len(self.resultList)
         
@@ -238,6 +239,11 @@ class BlackBoxTree:
 
             curSlashCount   = curPath.count('/')
             fileName        = curPath.replace(self.baseName, '.')
+            
+            if len(fileName) > SKIP_LEN:
+                splitName   = fileName.split('/')
+                fileName    = f".../{splitName[-2]}/{splitName[-1]}"
+            
             MsgLen          = DFLT_NAME_LEN - ( (curSlashCount - SHOW_DETAIL_DEPTH) * 3 )
             dashLen         = MsgLen - len(fileName) - 2
             
@@ -302,7 +308,11 @@ class BlackBoxTree:
 
     def select_num_to_open_file(self, maxLen):
         while True:
-            num = input(f"\n{C_SET} Select Num To Open Dir ( quit : q ) - ")
+            try:
+                num = input(f"\n{C_SET} Select Num To Open Dir ( quit : q ) - ")
+            except KeyboardInterrupt:
+                print()
+                sys.exit(0)
             
             if num == "q" or num == "Q":
                 print(f"{C_SET} Tree Exit")
@@ -327,8 +337,21 @@ class BlackBoxTree:
         
         
 def set_param_by_argv():
-    if len(sys.argv) >= 2:
+    global SEARCH_PATH, CUT_PATH
+    
+    if len(sys.argv) == 2:
         return sys.argv[1]
+    
+    elif len(sys.argv) == 3:    # KernelTree
+        
+        SEARCH_PATH = os.path.join(HOME_PATH, 'blackbox/system/kernel')
+        CUT_PATH    = os.path.join(HOME_PATH, 'blackbox/system')
+        
+        if sys.argv[2] == "None":
+            return None
+        else:
+            return sys.argv[2]
+        
     else:
         return None
         

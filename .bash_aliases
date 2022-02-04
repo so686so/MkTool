@@ -1161,6 +1161,7 @@ function upload_mkTool() {
 
 	cp -af ~/.bash_aliases ${HOME}/Personal/MkTool
 	cp -af ~/.bash_completion ${HOME}/Personal/MkTool
+	cp -af ~/MkTool/Extensions ${HOME}/Personal/MkTool
 
 	git commit -am "${patch_log_comment}"
 
@@ -1636,7 +1637,19 @@ function search_tree() {
 		return
 	fi
 
-	/bin/python3 ${EXT_SEARCH_TREE} $1
+	if [ "$1" == "kernel" ]
+	then
+		if [ $# -eq 2 ]
+		then
+			/bin/python3 ${EXT_SEARCH_TREE} kernel $2
+		else
+			/bin/python3 ${EXT_SEARCH_TREE} kernel None
+		fi
+	else
+		/bin/python3 ${EXT_SEARCH_TREE} $1
+	fi
+
+	
 
 	if [ -e ${EXTENSIONS_DIR}/${SEARCH_TREE_LOG} ]
 	then
@@ -1787,6 +1800,9 @@ function make_update_file_tool() {
 				;;
 			tree)
 				search_tree $2
+				;;
+			ktree)
+				search_tree kernel $2 
 				;;
 			*)
 				make_update_file $1 $2
