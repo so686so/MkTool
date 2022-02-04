@@ -8,7 +8,7 @@ _mk() {
     
     opt_list=( 	"setting" "option" "update" "version" "list" "load" "backup" "help" "pull"\
 	    		"clear" "store" "open" "sd_copy" "kill" "show" "start" "size" \
-				"package_list" "plist" "solve_conflict" "git_cola")
+				"package_list" "plist" "solve_conflict" "git_cola", "tree")
 
 	total_list=(${opt_list[@]})
     total_list+=($(extract_mkapp_list))

@@ -107,452 +107,92 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-export MY_CVS_SOURCE_PATH=/home/sobyungjun/blackbox/janus_nvs3310
 
-
-#TIBET_PROJECT=next
-#TIBET_PROJECT=dm36x
-#TIBET_PROJECT=dm365
-#TIBET_PROJECT=sdl
-#TIBET_PROJECT=A1
-#TIBET_PROJECT=gt500
-#TIBET_PROJECT=A20
-#TIBET_PROJECT=BATTERY_JIG
-#TIBET_PROJECT=A4
-#TIBET_PROJECT=A5
-#TIBET_PROJECT=A7
-#TIBET_PROJECT=A8
-#TIBET_PROJECT=A9
-#TIBET_PROJECT=A20_FOCUS
-#TIBET_PROJECT=A31_ISP
-#TIBET_PROJECT=K1
-#TIBET_PROJECT=CAMD
-#TIBET_PROJECT=L3
-#TIBET_PROJECT=V5
-#TIBET_PROJECT=A3_OLD
 #TIBET_PROJECT=A3
-#TIBET_PROJECT=A33
-#TIBET_PROJECT=V3_OLD
-#TIBET_PROJECT=S3_OLD
-TIBET_PROJECT=V3
+#TIBET_PROJECT=V3
 #TIBET_PROJECT=V4
-#TIBET_PROJECT=V8
-#TIBET_PROJECT=V4_OLD
+TIBET_PROJECT=V8
 #TIBET_PROJECT=S3
 
 case $TIBET_PROJECT in
-	next)
-		COMPILER_DIR1=/home/sobyungjun/svn/toolchain/armv7/codesourcery/bin
-		COMPILER_DIR2=/opt/armv7/codesourcery/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-none-linux-gnueabi-
-		export CROSS_COMPILE=arm-none-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_SOURCE_PATH=/home/jk//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install
-#		export SDL_LIB_PATH=/home/jk/source_working_sdl_2/libsdl
-#		export SDL_LIB_PATH=/home/jk/svn/source/libsdl
-		;;
-	dm36x)
-		COMPILER_DIR1=/home/sobyungjun/svn/ti_compiler/mv_pro_5.0/montavista/pro/devkit/arm/v5t_le/bin
-#		COMPILER_DIR2=/opt/armv7/codesourcery/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm_v5t_le-
-		export CROSS_COMPILE=arm_v5t_le-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/montavista_linux-2.6.18
-#		export THIS_SOURCE_PATH=/home/sobyungjun//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install
-#		export SDL_LIB_PATH=/home/sobyungjun/source_working_sdl_2/libsdl
-#		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-	dm365)
-		COMPILER_DIR1=/home/sobyungjun/svn/ti_compiler/mv_pro_5.0/montavista/pro/devkit/arm/v5t_le/bin
-#		COMPILER_DIR1=/home/sobyungjun/svn/system/compiler/mv_pro_5.0/montavista/pro/devkit/arm/v5t_le/bin
-#		COMPILER_DIR2=/opt/armv7/codesourcery/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm_v5t_le-
-		export CROSS_COMPILE=arm_v5t_le-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/montavista_linux-2.6.18
-#		export THIS_SOURCE_PATH=/home/sobyungjun//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_dm365
-#		export SDL_LIB_PATH=/home/sobyungjun/source_working_sdl_2/libsdl
-#		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-	sdl)
-#		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin	
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/gnet_v5/compiler/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/sdl_compile/sdl_dir/sdl
-		export THIS_INSTALL_PATH=/home/sobyungjun/install
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/bin/libsdl
-		export SDL_PREFIX=/home/sobyungjun/sdl_compile/sdl_dir/sdl_prefix
-		export SDL_INC_PATH=/home/sobyungjun/svn/source/inc/SDL/
-#		export SDL_TOOLCHAIN_DIR=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-		export SDL_TOOLCHAIN_DIR=/home/sobyungjun/svn/BlackBox/gnet_v5/compiler/bin
-
-		;;
-
-	A1)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a1/compiler/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_SOURCE_PATH=/home/jk//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a1
-#		export SDL_LIB_PATH=/home/sobyungjun/source_working_sdl_2/libsdl
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-	
-	gt500)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_SOURCE_PATH=/home/jk//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_gt500
-#		export SDL_LIB_PATH=/home/sobyungjun/source_working_sdl_2/libsdl
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-
-	A20)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_SOURCE_PATH=/home/jk//home/jk/svn/source_working_sdl_2
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-#		export THIS_SOURCE_PATH=$MY_CVS_SOURCE_PATH/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_gw200
-#		export SDL_LIB_PATH=/home/sobyungjun/source_working_sdl_2/libsdl
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-	A31)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a2
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		;;
-	A3_OLD)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a3
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
 	A3)
-		COMPILER_DIR1=/home/sobyungjun/blackbox/a3/compiler/external-toolchain/bin
+		COMPILER_DIR1=${HOME}/blackbox/a3/compiler/external-toolchain/bin
 		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
 		export CROSS_TOOL=arm-linux-gnueabi-
 		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/blackbox/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/blackbox/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a3
-		export SDL_LIB_PATH=/home/sobyungjun/blackbox/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/blackbox/system/ramdisk/usr/lib
-		;;
-
-
-	A33)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a33/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a33
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	A20_FOCUS)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/BlackBox/janus_a1/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_focus
-		;;
-	A31_ISP)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/BlackBox/util/isp_fusing/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_isp
-		;;
-	K1)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_k1
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libsdl
-		;;
-	CAMD)
-		COMPILER_DIR1=/home/sobyungjun/A20/compiler/external-toolchain/bin
-#		COMPILER_DIR1=/home/sobyungjun/V3/SDK_NAND/camdroid/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_c3
-#		export ONE_SHOT_MAKEFILE=/home/sobyungjun/svn/source/CamLinux.mk 
-#		export TOP=/home/sobyungjun/V3/SDK_NAND/camdroid
-		;;
-	A4)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a1/compiler/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/brandy/gcc-linaro/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/out/sun8iw11p1/linux/common/buildroot/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a4
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-	A5)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/brandy/gcc-linaro/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a5
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-	A7)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a1/compiler/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/brandy/gcc-linaro/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/out/sun8iw11p1/linux/common/buildroot/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a7
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-	A8)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a1/compiler/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/brandy/gcc-linaro/bin
-#		COMPILER_DIR1=/home/sobyungjun/V40/lichee/out/sun8iw11p1/linux/common/buildroot/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a8
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	L3)
-		COMPILER_DIR1=/home/sobyungjun/A3/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_LINUX_KERNEL=/home/sobyungjun/extrahdd/V3/SDK_NAND/lichee/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_l3
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	A9)
-#		COMPILER_DIR1=/home/sobyungjun/A3/compiler/external-toolchain/bin
-		COMPILER_DIR1=/home/sobyungjun/extrahdd/V5/v5evb2/lichee/out/external-toolchain/gcc-arm/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-#		export THIS_LINUX_KERNEL=/home/sobyungjun/extrahdd/V3/SDK_NAND/lichee/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/janus_a9
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	BATTERY_JIG)
-#		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/battery_jig/compiler/external-toolchain/bin
-
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/battery_jig
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	V5)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/gnet_v5/compiler/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v5
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
-		;;
-
-	V3_OLD)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v3
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
+		export THIS_LINUX_KERNEL=${HOME}/blackbox/system/kernel
+		export THIS_SOURCE_PATH=${HOME}/blackbox/source
+		export THIS_INSTALL_PATH=${HOME}/install/janus_a3
+		export SDL_LIB_PATH=${HOME}/blackbox/source/libs/sdl/lib
+		export THIS_RAMDISK_LIB=${HOME}/blackbox/system/ramdisk/usr/lib
 		;;
 
 	V3)
-		COMPILER_DIR1=/home/sobyungjun/blackbox/a3/compiler/external-toolchain/bin
+		COMPILER_DIR1=${HOME}/blackbox/a3/compiler/external-toolchain/bin
 		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
 		export CROSS_TOOL=arm-linux-gnueabi-
 		export CROSS_COMPILE=arm-linux-gnueabi-
-		export THIS_LINUX_KERNEL=/home/sobyungjun/blackbox/v3/system/kernel
-		export THIS_SOURCE_PATH=/home/sobyungjun/blackbox/v3/source
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v3
-		export SDL_LIB_PATH=/home/sobyungjun/blackbox/v3/source/libs/sdl/lib
-		export THIS_RAMDISK_LIB=/home/sobyungjun/blackbox/v3/system/ramdisk/usr/lib
+		export THIS_LINUX_KERNEL=${HOME}/blackbox/v3/system/kernel
+		export THIS_SOURCE_PATH=${HOME}/blackbox/v3/source
+		export THIS_INSTALL_PATH=${HOME}/install/gnet_v3
+		export SDL_LIB_PATH=${HOME}/blackbox/v3/source/libs/sdl/lib
+		export THIS_RAMDISK_LIB=${HOME}/blackbox/v3/system/ramdisk/usr/lib
 		;;
 
 
 	V4)
-		COMPILER_DIR1=/home/sobyungjun/blackbox/v4/compiler/bin
+		COMPILER_DIR1=${HOME}/blackbox/v4/compiler/bin
 		PATH=$COMPILER_DIR1:$PATH
 #		export CROSS_TOOL=arm-linux-gnueabi-
 #		export CROSS_COMPILE=arm-linux-gnueabi-
 		export CROSS_TOOL=arm-openwrt-linux-muslgnueabi-
 		export CROSS_COMPILE=arm-openwrt-linux-muslgnueabi-
-		export STAGING_DIR=/home/sobyungjun/blackbox/v4/system/ramdisk
-		export MPP_DIR=/home/sobyungjun/blackbox/v4/source/mpp
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v4
-		export SDL_LIB_PATH=/home/sobyungjun/blackbox/v4/source/libs/sdl/lib
-		export THIS_SOURCE_PATH=/home/sobyungjun/blackbox/v4/source
-		export THIS_LINUX_KERNEL=/home/sobyungjun/blackbox/v4/system/kernel
-		export THIS_RAMDISK_LIB=/home/sobyungjun/blackbox/v4/system/ramdisk/usr/lib
-		;;
-
-	V4_OLD)
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/gnet_v4/compiler/bin
-		PATH=$COMPILER_DIR1:$PATH
-#		export CROSS_TOOL=arm-linux-gnueabi-
-#		export CROSS_COMPILE=arm-linux-gnueabi-
-		export CROSS_TOOL=arm-openwrt-linux-muslgnueabi-
-		export CROSS_COMPILE=arm-openwrt-linux-muslgnueabi-
-		export STAGING_DIR=/home/sobyungjun/svn/BlackBox/gnet_v4/system/ramdisk
-		export MPP_DIR=/home/sobyungjun/svn/BlackBox/gnet_v4/source/mpp
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v4
-		export SDL_LIB_PATH=/home/sobyungjun/svn/BlackBox/gnet_v4/source/libs/sdl/lib
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/BlackBox/gnet_v4/source
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/BlackBox/gnet_v4/system/kernel
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/BlackBox/gnet_v4/system/ramdisk/usr/lib
-		;;
-
-
-	S3_OLD)
-#		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
-#		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/gnet_s3/compiler/bin
-		PATH=$COMPILER_DIR1:$PATH
-		export CROSS_TOOL=arm-linux-gnueabi-
-		export CROSS_COMPILE=arm-linux-gnueabi-
-		export STAGING_DIR=/home/sobyungjun/svn/BlackBox/gnet_s3/system/ramdisk
-#		export MPP_DIR=/home/sobyungjun/svn/source/mpp
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_s3
-		export SDL_LIB_PATH=/home/sobyungjun/svn/source/libs/sdl/lib
-		export THIS_SOURCE_PATH=/home/sobyungjun/svn/source
-		export THIS_LINUX_KERNEL=/home/sobyungjun/svn/system/kernel
-		export THIS_RAMDISK_LIB=/home/sobyungjun/svn/system/ramdisk/usr/lib
+		export STAGING_DIR=${HOME}/blackbox/v4/system/ramdisk
+		export MPP_DIR=${HOME}/blackbox/v4/source/mpp
+		export THIS_INSTALL_PATH=${HOME}/install/gnet_v4
+		export SDL_LIB_PATH=${HOME}/blackbox/v4/source/libs/sdl/lib
+		export THIS_SOURCE_PATH=${HOME}/blackbox/v4/source
+		export THIS_LINUX_KERNEL=${HOME}/blackbox/v4/system/kernel
+		export THIS_RAMDISK_LIB=${HOME}/blackbox/v4/system/ramdisk/usr/lib
 		;;
 
 	S3)
-#		COMPILER_DIR1=/home/sobyungjun/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
+#		COMPILER_DIR1=${HOME}/svn/BlackBox/janus_a3/compiler/external-toolchain/bin
 #		PATH=$COMPILER_DIR1:$COMPILER_DIR2:$PATH
-		COMPILER_DIR1=/home/sobyungjun/blackbox/s3/compiler/bin
+		COMPILER_DIR1=${HOME}/blackbox/s3/compiler/bin
 		PATH=$COMPILER_DIR1:$PATH
 		export CROSS_TOOL=arm-linux-gnueabi-
 		export CROSS_COMPILE=arm-linux-gnueabi-
-		export STAGING_DIR=/home/sobyungjun/blackbox/s3/system/ramdisk
-#		export MPP_DIR=/home/sobyungjun/svn/source/mpp
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_s3
-		export SDL_LIB_PATH=/home/sobyungjun/blackbox/source/libs/sdl/lib
-		export THIS_SOURCE_PATH=/home/sobyungjun/blackbox/source
-		export THIS_LINUX_KERNEL=/home/sobyungjun/blackbox/system/kernel
-		export THIS_RAMDISK_LIB=/home/sobyungjun/blackbox/system/ramdisk/usr/lib
+		export STAGING_DIR=${HOME}/blackbox/s3/system/ramdisk
+#		export MPP_DIR=${HOME}/svn/source/mpp
+		export THIS_INSTALL_PATH=${HOME}/install/gnet_s3
+		export SDL_LIB_PATH=${HOME}/blackbox/source/libs/sdl/lib
+		export THIS_SOURCE_PATH=${HOME}/blackbox/source
+		export THIS_LINUX_KERNEL=${HOME}/blackbox/system/kernel
+		export THIS_RAMDISK_LIB=${HOME}/blackbox/system/ramdisk/usr/lib
 		;;
 	V8)
-		COMPILER_DIR1=/home/sobyungjun/blackbox/v4/compiler/bin
+		COMPILER_DIR1=${HOME}/blackbox/v4/compiler/bin
 		PATH=$COMPILER_DIR1:$PATH
 #		export CROSS_TOOL=arm-linux-gnueabi-
 #		export CROSS_COMPILE=arm-linux-gnueabi-
 		export CROSS_TOOL=arm-openwrt-linux-muslgnueabi-
 		export CROSS_COMPILE=arm-openwrt-linux-muslgnueabi-
-		export STAGING_DIR=/home/sobyungjun/blackbox/v8/system/ramdisk
-		export MPP_DIR=/home/sobyungjun/blackbox/v8/source/mpp
-		export THIS_INSTALL_PATH=/home/sobyungjun/install/gnet_v8
-		export SDL_LIB_PATH=/home/sobyungjun/blackbox/v8/source/libs/sdl/lib
-		export THIS_SOURCE_PATH=/home/sobyungjun/blackbox/v8/source
-		export THIS_LINUX_KERNEL=/home/sobyungjun/blackbox/v8/system/kernel
-		export THIS_RAMDISK_LIB=/home/sobyungjun/blackbox/v8/system/ramdisk/usr/lib
-
+		export STAGING_DIR=${HOME}/blackbox/v8/system/ramdisk
+		export MPP_DIR=${HOME}/blackbox/v8/source/mpp
+		export THIS_INSTALL_PATH=${HOME}/install/gnet_v8
+		export SDL_LIB_PATH=${HOME}/blackbox/v8/source/libs/sdl/lib
+		export THIS_SOURCE_PATH=${HOME}/blackbox/v8/source
+		export THIS_LINUX_KERNEL=${HOME}/blackbox/v8/system/kernel
+		export THIS_RAMDISK_LIB=${HOME}/blackbox/v8/system/ramdisk/usr/lib
+		;;
 esac
 
 export ARCH=arm
 export CONFIG_DVR_DEBUG=y
-
-# svn blackbox
-CVSROOT=":ext:kbs@125.7.227.2:/rnd/CVS"
-#export CVSROOT
 export CC=${COMPILER_DIR1}/${CROSS_COMPILE}gcc
-#export CC=/home/sobyungjun/V3/SDK_NAND/camdroid/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-gcc
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-export BOUT=/home/bluez/
-
-#PATH=/usr/include:/home/bluez/include:$PATH
-
+# Prevent Screen Pause by 'Ctrl + S'
 stty -ixon

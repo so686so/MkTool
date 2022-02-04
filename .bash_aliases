@@ -3,32 +3,34 @@
 #                           CUSTOM SCRIPT                           #
 # ----------------------------------------------------------------- #
 #                                                                   #
-# * This file is shell script bundle for 'Gnet System'
+# * This file is shell script bundle for 'Gnet System'				#
 #                                                                   #
 # ----------------------------------------------------------------- #
 #                                                                   #
-# 1. fzf Utility
-#       - Search utility function using fzf
+# 1. fzf Utility													#
+#       - Search utility function using fzf							#
 #                                                                   #
-# 2. Mk Tool
-#       - A set of shell script commands for convenience
-#                                                                   #
-# ----------------------------------------------------------------- #
-#                                                                   #
-# 1. Essential Package
-#       - fzf
-#       - ripgrep
-#                                                                   #
-# 2. Recommended Package
-#       - duf
-#       - neofetch
+# 2. Mk Tool														#
+#       - A set of shell script commands for convenience			#
 #                                                                   #
 # ----------------------------------------------------------------- #
 #                                                                   #
-# > Install 'fzf'
-#   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-#   ~/.fzf/install
+# 1. Essential Package												#
+#       - fzf														#
+#       - ripgrep													#
 #                                                                   #
+# 2. Recommended Package											#
+#       - duf														#
+#       - neofetch													#
+#                                                                   #
+# ----------------------------------------------------------------- #
+#                                                                   #
+# > Install 'fzf'													#
+#   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf	#
+#   ~/.fzf/install													#
+#                                                                   #
+# ----------------------------------------------------------------- #
+#											Author : So Byung Jun	#
 # ================================================================= #
 
 # Fix Carriage Return Error when Window <-> Linux 
@@ -248,7 +250,7 @@ alias fl='show_fzf_search_log'
 
 # Option
 AUTO_DIR_COPY=Y
-AUTO_NFS_DETECT=N
+AUTO_NFS_DETECT=Y
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
@@ -264,9 +266,15 @@ NFS_IP='192.168.0.200'
 LAST_BACKUP_DATE=1228
 LAST_BACKUP_HOUR=09
 
-FTP_ID=so686so
-FTP_PW=1663
-ROOT_PW=
+ROOT_PW=!@so7019so
+
+# ============== Extensions ============== #
+EXTENSIONS_DIR=${HOME}/MkTool/Extensions
+
+# SearchTree Ext
+EXT_SEARCH_TREE="${EXTENSIONS_DIR}/search_tree.py"
+SEARCH_TREE_LOG="openDirName.tree"
+# ============== Extensions ============== #
 
 # Set option when 'source ~/.bashrc'
 if [ "${CHANGE_PROMPT}" == "Y" ]
@@ -1395,6 +1403,8 @@ function show_info() {
 	echo
 	neofetch --ascii_colors 7 4 --colors 4 4 4 4 --color_blocks off
 	echo
+
+	show_git_log_all
 }
 
 function check_inDir_size() {
@@ -1567,6 +1577,75 @@ function open_git_cola() {
 	git-cola -r ${HOME}/blackbox/${SELECT_PROJECT}
 }
 
+function show_git_log() {
+	local PROJECT_NAME=$1
+	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr [A-Z] [a-z]`
+	local PDIR="${HOME}/blackbox/${LOWER_PJ_NAME}"
+
+	local check_day=$2
+	test x"$check_day" == x && check_day=1
+
+	echo -e " ===== ${cBold}${cGreen}${PROJECT_NAME}${cReset} Project Git Log Until ${cBold}$check_day Days${cReset} ============================================================"
+
+	cd ${PDIR}
+	git log --color --pretty=format:'%<(2)%C(bold blue)[%>(9) %cr ]%C(reset) - %<(9)%s %C(bold green)/ %an %C(reset)' --since=$check_day.Days
+	echo -e " =================================================================================================="
+
+	echo	
+}
+
+function show_git_log_all() {
+	local pre_dir=$(pwd)
+	resize -s 40 150 >/dev/null
+	local check_day=1
+
+	local input_val=$1
+	local check_val=${input_val//[0-9]/}
+
+	if [ -z "$check_val" ]
+	then
+		check_day=$input_val
+	else
+		echo -e "${ERROR} '$input_val' is not number."
+		return
+	fi
+
+	echo
+
+	for each in ${PROJECT_LIST[@]}
+	do
+		show_git_log $each $check_day
+	done
+
+	cd $pre_dir
+}
+
+function search_tree() {
+
+	check_installed_package python3
+	if [ "$?" -gt 0 ]
+	then
+		echo -e "${NOTICE} : Sorry. that function need ${cGreen}python3${cReset} Package"
+		echo -e "- sudo apt-get install python3"
+		return
+	fi
+
+	if [ ! -e ${EXT_SEARCH_TREE} ]
+	then
+		echo -e "${NOTICE} There are no files to support that feature - ${cYellow}${EXT_SEARCH_TREE}${cReset}"
+		return
+	fi
+
+	/bin/python3 ${EXT_SEARCH_TREE} $1
+
+	if [ -e ${EXTENSIONS_DIR}/${SEARCH_TREE_LOG} ]
+	then
+		local openDir=`cat ${EXTENSIONS_DIR}/${SEARCH_TREE_LOG}`
+		echo -e ${SET} "Oepn Dir : ${cGreen}$openDir${cReset}\n"
+		nautilus $openDir
+	fi
+}
+
 function make_update_file_tool() {
 	CUR_DIR=`pwd`
 	cd ~/blackbox/source
@@ -1703,6 +1782,12 @@ function make_update_file_tool() {
 			git_cola | gc)
 				open_git_cola $2
 				;;
+			log)
+				show_git_log_all $2
+				;;
+			tree)
+				search_tree $2
+				;;
 			*)
 				make_update_file $1 $2
 				;;
@@ -1737,8 +1822,21 @@ alias get_idf='. $HOME/ESP/esp-idf/export.sh'
 alias get_42_if='. $HOME/ESP/esp_4_2/esp-idf/export.sh'
 alias mm='make clean; make; make install;'
 
+function show_alias() {
+	echo -e " =============================="
+	cat $1 | grep -n ^alias | awk -F 'alias ' '{print $2}' | awk -F '=' '{print " - " $1}'
+	echo -e " ==============================\n"
+}
+
+# show alias list
+alias al='f() {
+			echo -e "\n "`HEAD .bashrc`;
+			show_alias ~/.bashrc;
+			echo -e "\n "`HEAD .bash_aliases`;
+			show_alias ~/.bash_aliases; }; f'
+
 # Personal Function
-strip_file() {
+function strip_file() {
 	local FileList=()
 	FileList+=($(ls -R))
 	CUR_DIR=
