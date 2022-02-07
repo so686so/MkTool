@@ -16,7 +16,7 @@ SAVE_NAME   = "openDirName.tree"
 
 # CUSTOM DEFINE
 # -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-CODE_EXT    = [ '.c', '.cpp', '.h', 'makefile', 'Makefile' ]
+CODE_EXT    = [ '.c', '.cpp', '.h', 'makefile', 'Makefile', '.sh' ]
 SKIP_DIR    = [ 'mpp', 'ldws_img' ]
 
 

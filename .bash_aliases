@@ -255,8 +255,8 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.2.8
-LAST_UPDATE=2021-12-28
+MK_VERSION=1.2.9
+LAST_UPDATE=2022-02-07
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8") 
 
@@ -266,7 +266,7 @@ NFS_IP='192.168.0.200'
 LAST_BACKUP_DATE=1228
 LAST_BACKUP_HOUR=09
 
-ROOT_PW=!@so7019so
+ROOT_PW=
 
 # ============== Extensions ============== #
 EXTENSIONS_DIR=${HOME}/MkTool/Extensions
@@ -1621,6 +1621,33 @@ function show_git_log_all() {
 	cd $pre_dir
 }
 
+function show_git_status() {
+	local PROJECT_NAME=$1
+	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr [A-Z] [a-z]`
+	local PDIR="${HOME}/blackbox/${LOWER_PJ_NAME}"
+
+	cd ${PDIR}
+
+	echo -e "${RUN} Git Pull - ${cGreen}${PROJECT_NAME}${cReset}"
+	echo -e "===================================================================================="
+	git status -b | head -2
+	echo -e "------------------------------------------------------------------------------------"
+	git status -uno | grep -E "Makefile|makefile|\.c$|\.cpp$|\.h$|\.sh$"
+	echo -e "===================================================================================="
+	echo
+}
+
+function show_git_status_all() {
+	local pre_dir=$(pwd)
+
+	for each in ${PROJECT_LIST[@]}
+	do
+		show_git_status $each
+	done
+
+	cd $pre_dir
+}
+
 function search_tree() {
 
 	check_installed_package python3
@@ -1776,7 +1803,7 @@ function make_update_file_tool() {
 			show)
 				show_info
 				;;
-			start)
+			init)
 				update_package_version
 				manage_git_pull all
 				code
@@ -1803,6 +1830,9 @@ function make_update_file_tool() {
 				;;
 			ktree)
 				search_tree kernel $2 
+				;;
+			status)
+				show_git_status_all
 				;;
 			*)
 				make_update_file $1 $2
