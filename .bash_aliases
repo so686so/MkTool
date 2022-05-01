@@ -82,7 +82,7 @@ function get_fw_install_dir() {
 	# $1 : project name ( ex : a3, v8 )
 	if [ "$1" == "" ]
 	then
-		local project_name=$(echo -e ${TIBET_PROJECT} | tr [A-Z] [a-z])
+		local project_name=$(echo -e ${TIBET_PROJECT} | tr "[:upper:]" "[:lower:]")
 		if [ "${project_name}" == "a3" ]
 		then
 			echo -e -n "${HOME}/tftpboot/janus_a3/fw_install"
@@ -101,7 +101,7 @@ function get_install_dir() {
 	# $1 : project name ( ex : a3, v8 )
 	if [ "$1" == "" ]
 	then
-		local project_name=$(echo -e ${TIBET_PROJECT} | tr [A-Z] [a-z])
+		local project_name=$(echo -e ${TIBET_PROJECT} | tr "[:upper:]" "[:lower:]")
 		if [ "${project_name}" == "a3" ]
 		then
 			echo -e -n "${HOME}/install/janus_a3"
@@ -255,8 +255,8 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.0
-LAST_UPDATE=2022-04-29
+MK_VERSION=1.3.1
+LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
 
@@ -326,7 +326,7 @@ function get_value_project_name() {
 
 # ex) s3
 function project_version_name() {
-	cat ~/.bashrc | grep -n ^TIBET_PROJECT | grep -v "#" | awk -F '=' '{print $2}' | tr [A-Z] [a-z]
+	cat ~/.bashrc | grep -n ^TIBET_PROJECT | grep -v "#" | awk -F '=' '{print $2}' | tr "[:upper:]" "[:lower:]"
 }
 
 function get_line_option() {
@@ -396,7 +396,7 @@ function change_project() {
 	# Check Var is valid
 	if [ $# -ge 1 ]
 	then
-		temp_select=`echo -e $1 | tr [a-z] [A-Z]`
+		temp_select=`echo -e $1 | tr "[:upper:]" "[:lower:]"`
 		for each in ${LIST[@]}
 		do
 			if [ "${temp_select}" == "${each}" ]
@@ -442,7 +442,7 @@ function change_project() {
 	change_project_by_bashrc ${SELECT_PROJECT}
 	echo -e " - ${cYellow}${PRE_PROJECT}${cReset} -> ${cGreen}${SELECT_PROJECT}${cReset}"
 
-	SELECT_PROJECT=$(echo -e ${SELECT_PROJECT} | tr [A-Z] [a-z])
+	SELECT_PROJECT=$(echo -e ${SELECT_PROJECT} | tr "[:upper:]" "[:lower:]")
 
 	echo -e " - Change setting : project_change.sh -> ${SELECT_PROJECT}"
 	cd ~/blackbox
@@ -975,7 +975,7 @@ function run_git_pull() {
 	local Pull_Dir="${HOME}/blackbox/${PROJECT_NAME}"
 
 	echo -n -e "${RUN} Git Pull - ${cGreen}"
-	echo -e ${PROJECT_NAME} | tr [a-z] [A-Z]
+	echo -e ${PROJECT_NAME} | tr "[:upper:]" "[:lower:]"
 	echo -n -e ${cReset}
 
 	cd ${Pull_Dir}
@@ -986,7 +986,7 @@ function run_git_pull() {
 function manage_git_pull() {
 	local route_list=( "v4" "a3" "s3" "v3" "v8" "util" "all" )
 	local is_all_value="false"
-	local args=`echo $@ | tr [A-Z] [a-z]`
+	local args=`echo $@ | tr "[:upper:]" "[:lower:]"`
 	local PROJECT_NAME=$(project_version_name)
 
 	echo ""
@@ -1547,7 +1547,7 @@ function open_git_cola() {
 	# Check Var is valid
 	if [ $# -ge 1 ]
 	then
-		temp_select=`echo -e $1 | tr [a-z] [A-Z]`
+		temp_select=`echo -e $1 | tr "[:upper:]" "[:lower:]"`
 		for each in ${PROJECT_LIST[@]}
 		do
 			if [ "${temp_select}" == "${each}" ]
@@ -1568,7 +1568,7 @@ function open_git_cola() {
 	if [ "${is_valid_arg}" == "true" ]
 	then
 		# Set Change Project when recv Correct Arg
-		SELECT_PROJECT=`echo -e ${temp_select} | tr [A-Z] [a-z]`
+		SELECT_PROJECT=`echo -e ${temp_select} | tr "[:upper:]" "[:lower:]"`
 	else
 		SELECT_PROJECT=$(project_version_name)
 	fi
@@ -1580,7 +1580,7 @@ function open_git_cola() {
 
 function show_git_log() {
 	local PROJECT_NAME=$1
-	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr [A-Z] [a-z]`
+	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr "[:upper:]" "[:lower:]"`
 	local PDIR="${HOME}/blackbox/${LOWER_PJ_NAME}"
 
 	local check_day=$2
@@ -1623,7 +1623,7 @@ function show_git_log_all() {
 
 function show_git_status() {
 	local PROJECT_NAME=$1
-	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr [A-Z] [a-z]`
+	local LOWER_PJ_NAME=`echo -e ${PROJECT_NAME} | tr "[:upper:]" "[:lower:]"`
 	local PDIR="${HOME}/blackbox/${LOWER_PJ_NAME}"
 
 	cd ${PDIR}
