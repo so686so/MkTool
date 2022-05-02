@@ -271,7 +271,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.5
+MK_VERSION=1.3.6
 LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1703,10 +1703,22 @@ function show_patch_log() {
 	local pre_dir=`pwd`
 	resize -s 40 150 >/dev/null
 
-	if [ -d "${HOME}/blackbox/MkTool" ]
+	if [ -e "${HOME}/MkTool" ]
 	then
-		rm -rf ${HOME}/blackbox/MkTool
+		cd ${HOME}/MkTool
+		git pull --quiet
+	else
+		cd ${HOME}
+		git clone --quiet ${GitAddress}
 	fi
+
+	if [ $? -gt 0 ]
+	then
+		cd ${HOME}
+		git clone --quiet ${GitAddress}
+	fi
+
+	cd ${HOME}/MkTool
 
 	echo -e "\n ===== ${cBold}${cGreen}mkTool${cReset} Project Git Log${cReset} ============================================================"
 	git log --color --pretty=format:'%<(2)%C(bold blue)[%>(9) %cr ]%C(reset) - %<(9)%s %C(bold green)/ %an %C(reset)'
