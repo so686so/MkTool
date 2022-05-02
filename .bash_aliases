@@ -32,6 +32,7 @@
 # ----------------------------------------------------------------- #
 #											Author : So Byung Jun	#
 # ================================================================= #
+mkToolGit="http://github.com/so686so/mkTool"
 
 # Fix Carriage Return Error when Window <-> Linux 
 sed -i -e 's/\r$//' ~/.bash_aliases
@@ -135,7 +136,7 @@ FZF_SETTING="	--height 50%                        \
                 --bind=ctrl-z:preview-page-up       \
                 --bind=ctrl-/:toggle-preview"
 
-# fzf Functions
+# fzf Functions - ff, ffa, ffs
 function fzf_connect_vim() {
 	local pre_dir=`pwd`
 	local search_value="${cYellow}None Search Value${cReset}"
@@ -144,12 +145,19 @@ function fzf_connect_vim() {
 
 	echo -n -e "${RUN} fzf-vim Utility By ${cYellow}$1${cReset} "
 
+	# ffs : search current project source path
 	if [ "$1" == "Source_Dir" ]
 	then
 		cd ~/blackbox/source
+
+	# ffa : search home path
 	elif [ "$1" == "All_Dir" ]
 	then
 		cd ~/
+
+	# ff : search current path
+	else
+		cd `pwd`
 	fi
 
 	echo -e "( ${cLine}$(pwd)${cReset} )"
@@ -159,6 +167,9 @@ function fzf_connect_vim() {
 	then
 		search_value=$2 
 		echo -e "${SET} grep -> ${cLine}$2${cReset}"
+
+		# rg -i --files-with-matches --no-messages : find word-matcthes files list
+
 		_file=$(rg -i --files-with-matches --no-messages "$2" | \
 				fzf ${FZF_SETTING} \
 				--preview "cat -n {} | rg -i --color always \"$2\"" \
@@ -193,6 +204,7 @@ function fzf_connect_vim() {
 	cd ${pre_dir}
 }
 
+# fcd
 function fzf_connect_cd() {
 	local pre_dir=`pwd`
 
@@ -220,6 +232,7 @@ function fzf_connect_cd() {
 	fi
 }
 
+# fl
 function show_fzf_search_log {
 	local search_count="3"
 
@@ -228,12 +241,15 @@ function show_fzf_search_log {
 		search_count=$1
 	fi
 
+	echo -e "\n=== ${cBold}Fzf Search List : Last ${search_count} Log ${cReset}========================"
+
 	local CUT_LINE=$(cat ~/fzf_search_log.txt | grep -n "\[ " | tail -n ${search_count} | head -n 1 | awk -F ':' '{print $1}')
 	local END_LINE=$(wc -l ~/fzf_search_log.txt | awk -F ' ' '{print $1}')
 	local START_LINE=$(( ${END_LINE} - ${CUT_LINE} + 1 ))
 
 	echo
 	cat ~/fzf_search_log.txt | tail -n ${START_LINE}
+	echo -e "=========================================================\n"
 }
 
 # fzf Aliases
@@ -255,7 +271,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.1
+MK_VERSION=1.3.2
 LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1686,6 +1702,29 @@ function search_tree() {
 	fi
 }
 
+function show_patch_log() {
+	local pre_dir=`pwd`
+	resize -s 40 150 >/dev/null
+
+	if [ -d "${HOME}/blackbox/MkTool" ]
+	then
+		rm -rf ${HOME}/blackbox/MkTool
+	fi
+
+	cd ${HOME}/blackbox
+	git clone --quiet https://github.com/so686so/MkTool.git
+	cd MkTool	
+
+	echo -e "\n ===== ${cBold}${cGreen}mkTool${cReset} Project Git Log${cReset} ============================================================"
+	git log --color --pretty=format:'%<(2)%C(bold blue)[%>(9) %cr ]%C(reset) - %<(9)%s %C(bold green)/ %an %C(reset)'
+	echo -e " =========================================================================================\n"
+
+	cd ~
+	rm -rf ${HOME}/blackbox/MkTool
+
+	cd ${pre_dir}
+}
+
 function make_update_file_tool() {
 	CUR_DIR=`pwd`
 	cd ~/blackbox/source
@@ -1833,6 +1872,9 @@ function make_update_file_tool() {
 				;;
 			status)
 				show_git_status_all
+				;;
+			patch_log)
+				show_patch_log
 				;;
 			*)
 				make_update_file $1 $2

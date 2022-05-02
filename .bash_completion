@@ -7,7 +7,7 @@ _mk() {
     _get_comp_words_by_ref cur
     
     opt_list=( 	"setting" "option" "update" "version" "list" "load" "backup" "help" "pull"\
-	    		"clear" "store" "open" "sd_copy" "kill" "show" "init" "size" \
+	    		"clear" "store" "open" "sd_copy" "kill" "show" "init" "size" "patch_log"\
 				"package_list" "plist" "solve_conflict" "git_cola" "tree" "ktree" "status" )
 
 	total_list=(${opt_list[@]})
