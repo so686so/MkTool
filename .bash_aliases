@@ -32,7 +32,7 @@
 # ----------------------------------------------------------------- #
 #											Author : So Byung Jun	#
 # ================================================================= #
-mkToolGit="http://github.com/so686so/mkTool"
+GitAddress="https://github.com/so686so/MkTool.git"
 
 # Fix Carriage Return Error when Window <-> Linux 
 sed -i -e 's/\r$//' ~/.bash_aliases
@@ -271,7 +271,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.2
+MK_VERSION=1.3.3
 LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1110,7 +1110,7 @@ function update_mk_file() {
 	echo -e "${RUN} Git Clone - MkTool"
 
 	cd ${HOME}/blackbox
-	git clone https://github.com/so686so/MkTool.git
+	git clone ${GitAddress}
 	cd MkTool
 
 	\mv -f .bash_aliases ${HOME}/
@@ -1712,7 +1712,7 @@ function show_patch_log() {
 	fi
 
 	cd ${HOME}/blackbox
-	git clone --quiet https://github.com/so686so/MkTool.git
+	git clone --quiet ${GitAddress}
 	cd MkTool	
 
 	echo -e "\n ===== ${cBold}${cGreen}mkTool${cReset} Project Git Log${cReset} ============================================================"
