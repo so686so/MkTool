@@ -271,7 +271,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.4
+MK_VERSION=1.3.5
 LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -412,7 +412,7 @@ function change_project() {
 	# Check Var is valid
 	if [ $# -ge 1 ]
 	then
-		temp_select=`echo -e $1 | tr "[:upper:]" "[:lower:]"`
+		temp_select=`echo -e $1 | tr "[:lower:]" "[:upper:]"`
 		for each in ${LIST[@]}
 		do
 			if [ "${temp_select}" == "${each}" ]
