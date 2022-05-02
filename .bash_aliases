@@ -271,7 +271,7 @@ AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 
-MK_VERSION=1.3.3
+MK_VERSION=1.3.4
 LAST_UPDATE=2022-05-02
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1102,14 +1102,14 @@ function update_mk_file() {
 		BACKUP_OPTION_VALUE+=(${temp_value})
 	done
 
-	if [ -d "${HOME}/blackbox/MkTool" ]
+	if [ -d "${HOME}/MkTool" ]
 	then
-		rm -rf ${HOME}/blackbox/MkTool
+		rm -rf ${HOME}/MkTool
 	fi
 
 	echo -e "${RUN} Git Clone - MkTool"
 
-	cd ${HOME}/blackbox
+	cd ${HOME}
 	git clone ${GitAddress}
 	cd MkTool
 
@@ -1139,9 +1139,6 @@ function update_mk_file() {
 	echo -e "${DONE} Applies done."
 
 	cd ~
-	echo -e "${RUN} Remove temp MkTool Dir"
-	rm -rf ${HOME}/blackbox/MkTool
-
 	echo -e "${RUN} Meld Backup .bash_aliases & .bash_completion"
 	meld .bash_aliases .bash_aliases_backUp
 	meld .bash_completion .bash_completion_backUp
@@ -1711,16 +1708,9 @@ function show_patch_log() {
 		rm -rf ${HOME}/blackbox/MkTool
 	fi
 
-	cd ${HOME}/blackbox
-	git clone --quiet ${GitAddress}
-	cd MkTool	
-
 	echo -e "\n ===== ${cBold}${cGreen}mkTool${cReset} Project Git Log${cReset} ============================================================"
 	git log --color --pretty=format:'%<(2)%C(bold blue)[%>(9) %cr ]%C(reset) - %<(9)%s %C(bold green)/ %an %C(reset)'
 	echo -e " =========================================================================================\n"
-
-	cd ~
-	rm -rf ${HOME}/blackbox/MkTool
 
 	cd ${pre_dir}
 }
