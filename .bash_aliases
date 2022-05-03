@@ -66,11 +66,11 @@ function check_installed_package() {
 }
 
 function show_how_install_fzf() {
-		echo -e "${NOTICE} Sorry. that function need ${cGreen}fzf${cReset} Package"
-		echo -e "  ================================================================="
-		echo -e "  - git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
-		echo -e "  - ~/.fzf/install"
-		echo -e "  ================================================================="
+	echo -e "${NOTICE} Sorry. that function need ${cGreen}fzf${cReset} Package"
+	echo -e "  ================================================================="
+	echo -e "  - git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
+	echo -e "  - ~/.fzf/install"
+	echo -e "  ================================================================="
 }
 
 function shorten_path() {
@@ -270,17 +270,18 @@ AUTO_NFS_DETECT=Y
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
+FASTER_MK_APP=Y
 
-MK_VERSION=1.3.6
-LAST_UPDATE=2022-05-02
+MK_VERSION=1.3.7
+LAST_UPDATE=2022-05-03
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
 
 TEMP_BACKUP_CONFILICT_FILES="${HOME}/blackbox/tempBackupConflict"
 
 NFS_IP='192.168.0.200'
-LAST_BACKUP_DATE=1228
-LAST_BACKUP_HOUR=09
+LAST_BACKUP_DATE=0503
+LAST_BACKUP_HOUR=10
 
 ROOT_PW=
 
@@ -407,7 +408,7 @@ function change_project() {
 	local temp_select=""
 	local SELECT_PROJECT=""
 
-	echo -e "\n[ Current Project : ${cYellow}${PRE_PROJECT}${cReset} ]"
+	echo -e "\n${cBold}[ Current Project : ${cYellow}${PRE_PROJECT}${cReset} ${cBold}]${cReset}"
 
 	# Check Var is valid
 	if [ $# -ge 1 ]
@@ -471,6 +472,114 @@ function change_project() {
 	echo -e " - source ~/.bashrc Done.\n"
 }
 
+function extract_mkapp_list_one_line() {
+	local START_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'case $1 in' | awk -F ':' '{print $1}')
+	local END_LINE=$(wc -l ~/blackbox/system/mk_app.sh | awk -F ' ' '{print $1}')
+	local LIST_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'esac' | awk -F ':' '{print $1}')
+
+	local SUBS=$(( ${END_LINE} - ${START_LINE} + 1 ))
+	local TAIL_CUT=$(( ${LIST_LINE} - ${START_LINE} ))
+
+	local READ_DATA=`cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT}`
+
+	echo -e $READ_DATA
+}
+
+function visualized_mkapp_list() {
+
+	local READ_DATA=`extract_mkapp_list_one_line`
+
+	local REPEAT_COUNT=`echo $READ_DATA | awk -F ";;" "{print NF}"`
+	local SEARCH_COUNT="\$1"
+
+	local APP_TOTAL="None"
+	local APP_TITLE="None"
+	local APP_LIST=()
+
+	local find_name=""
+
+	echo -e "\n${cBold}[ Current Project : ${cYellow}${TIBET_PROJECT}${cReset} ${cBold}]${cReset}\n"
+
+	for (( i=1; i<${REPEAT_COUNT}; i++ ));
+	do
+		SEARCH_COUNT="\$${i}"
+
+		APP_TOTAL=`echo $READ_DATA | awk -F ";;" "{print $SEARCH_COUNT}"`
+		APP_TOTAL=`echo ${APP_TOTAL//'case $1 in'/}`
+
+		APP_TITLE=`echo $APP_TOTAL | awk -F ')' '{print $1}'`
+		APP_LIST=(`echo $APP_TOTAL | awk -F ')' '{print $2}'`)
+
+		# Show only title
+		if [ "$1" == "title" ]
+		then
+			echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${APP_TITLE}${cReset}"
+
+		# Search word 
+		# --> Search Start
+		elif [ ! "$1" == "" ]
+		then
+			# check grep title
+			find_name=`echo -e $APP_TITLE | grep -i $1`
+
+			# Case 1 : When there are no search results in the title
+			if [ "${find_name}" == "" ]
+			then
+				# check grep fw list
+				for each in ${APP_LIST[@]}
+				do
+					find_name=`echo -e $each | grep -i $1`
+					if [ ! "${find_name}" == "" ]
+					then
+						break
+					fi
+				done
+		# --> Search Done
+
+				if [ "${find_name}" == "" ]
+				then
+					# if not exist word anything, skip
+					continue
+				else
+					echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${APP_TITLE}${cReset}"
+
+					for each in ${APP_LIST[@]}
+					do
+						if [ "${find_name}" == $"${each//';;'/}" ]
+						then
+							echo -e "   - ${cYellow}${each//';;'/}${cReset}"
+						else
+							echo -e "   - ${each//';;'/}"
+						fi
+					done
+					echo
+				fi
+
+			# Case 2 : When there are search results in the title
+			else
+				echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${cYellow}${APP_TITLE}${cReset}"
+
+				for each in ${APP_LIST[@]}
+				do
+					echo -e "   - ${each//';;'/}"
+				done
+				echo
+			fi
+		
+		# None Args : normal case
+		else
+			echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${APP_TITLE}${cReset}"
+
+			for each in ${APP_LIST[@]}
+			do
+				echo -e "   - ${each//';;'/}"
+			done
+			echo
+		fi
+	done
+	echo
+}
+
 function show_mkapp_list() {
 	local PROJECT_NAME=${TIBET_PROJECT}
 
@@ -479,22 +588,9 @@ function show_mkapp_list() {
 	local LIST_LINE=$(cat ~/blackbox/system/mk_app.sh | grep -n 'esac' | awk -F ':' '{print $1}')
 
 	local SUBS=$(( ${END_LINE} - ${START_LINE} + 1 ))
-	local TAIL_CUT=$(( ${LIST_LINE} - ${START_LINE} ))	#HC
+	local TAIL_CUT=$(( ${LIST_LINE} - ${START_LINE} ))
 
-	echo -e "\n${cYellow}[ Current Project : ${PROJECT_NAME} ]${cReset}"
-
-	if [ ! "$1" == "" ]
-	then
-		if [ ! "$1" == "title" ]
-		then
-			cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT} | grep -i $1
-		else
-			echo -e "${SET} Only Show Title"
-			extract_mkapp_list
-		fi
-	else
-		cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT}
-	fi
+	cat ~/blackbox/system/mk_app.sh | tail -n ${SUBS} | head -n ${TAIL_CUT}
 }
 
 function extract_mkapp_list() {
@@ -505,7 +601,7 @@ function extract_mkapp_list() {
 
 function setting_option() {
 	local choice_num="-1"
-	local OPT_LIST=( "AUTO_DIR_COPY" "AUTO_NFS_DETECT" "AUTO_BACKUP" "CHANGE_PROMPT" "IMPROVED_AUTO_COMPLETE" "Exit" )
+	local OPT_LIST=( "AUTO_DIR_COPY" "AUTO_NFS_DETECT" "AUTO_BACKUP" "CHANGE_PROMPT" "IMPROVED_AUTO_COMPLETE" "FASTER_MK_APP" "Exit" )
 	local opt_line=""
 	local opt_value=""
 	local separator="|"
@@ -516,13 +612,14 @@ function setting_option() {
         "- Automatically save the code you are currently working on in git stash.\n- This function only works once every hour."
         "- Replace the prompt output of the terminal.\n- Prints the current project and directory."
         "- Change the autocomplete algorithm.\n- Delete word when esc key twice | Auto-completion cycle | Highlight"
+        "- Speed up mk_app.sh by using multiple cores"
     )
 
-	while [ "${choice_num}" -lt 5 ]
+	while [ "${choice_num}" -lt 6 ]
 	do
 		clear
 		echo -e "\n== [ Option ] ================================================================="
-		for n in {0..5}
+		for n in {0..6}
 		do
 			opt_line=$(get_line_option ${OPT_LIST[$n]})
 			opt_value=$(get_value_option ${OPT_LIST[$n]})
@@ -552,10 +649,10 @@ function setting_option() {
 
 		read choice_num
 
-		if [ "${choice_num}" -gt 5 ]
+		if [ "${choice_num}" -gt 6 ]
 		then
 			continue
-		elif [ "${choice_num}" -eq 5 ]
+		elif [ "${choice_num}" -eq 6 ]
 		then
 			cd ~
 			source ~/.bashrc
@@ -806,8 +903,34 @@ function make_update_file() {
 
 	cd ~/blackbox/system
 	echo -e "${RUN} mk_app.sh${cGreen}" $1 "${cReset}\n\n"
-	./mk_app.sh "$1"
-	
+
+	if [ "${FASTER_MK_APP}" == "Y" ]
+	then
+		local core_num=`cat /proc/cpuinfo | grep cores | wc -l`
+
+		echo -e "${SET} mk_app.sh run faster."
+		echo -e "${SET} Get cpu process : ${cSky}${core_num}${cReset}"
+		echo -e "${SET} copy mk_app.sh -> faster_mk_app.sh"
+		echo -e "${SET} run core process num 1 -> ${core_num}\n\n"
+
+		touch make_app.log
+
+		cp -af mk_app.sh faster_mk_app.sh
+		sed -i "s/-processors 1/-processors ${core_num} -no-progress/g" faster_mk_app.sh
+		sed -i 's/rm -rf ${SQFS_NAME}/rm -rf ${SQFS_NAME}\n echo -e " - $INSTALL_TOTAL_NAME.arm" >> make_app.log\n/g' faster_mk_app.sh
+
+		./faster_mk_app.sh "$1"
+
+		echo -e "\n\n================= MAKE F/W LIST ==========================="
+		cat make_app.log
+		echo -e "==========================================================="
+
+		rm make_app.log
+		rm faster_mk_app.sh
+	else
+		./mk_app.sh "$1"
+	fi
+
 	if [ $? -gt 0 ]
 	then
 		echo -e "\n${ERROR} mk_app.sh $1 FAILED.\n"
@@ -855,7 +978,7 @@ function make_update_file() {
 	# Auto copy file to ~install ( ./janus ) 
 	if [ "${AUTO_NFS_DETECT}" == "Y" ]
 	then
-		ping ${NFS_IP} -c 1 -i 0.3 &>/dev/null
+		ping ${NFS_IP} -c 1 -i 1 &>/dev/null
 		if [ $? -eq 0 ]
 		then
 			echo -e "${cSky}[ NFS Connected : Copy to update file to ./janus ]${cReset}\n"
@@ -1081,7 +1204,7 @@ function update_mk_file() {
 	cp ~/.bash_completion ~/.bash_completion_backUp
 
 	local BACKUP_FLAG=( "AUTO_DIR_COPY" "AUTO_NFS_DETECT" "AUTO_BACKUP" "CHANGE_PROMPT" "IMPROVED_AUTO_COMPLETE"\
-						"LAST_BACKUP_DATE" "LAST_BACKUP_HOUR" "ROOT_PW" )
+						"FASTER_MK_APP" "LAST_BACKUP_DATE" "LAST_BACKUP_HOUR" "ROOT_PW" )
 	local BACKUP_OPTION_LINE=()
 	local BACKUP_OPTION_VALUE=()
 	local temp_line=""
@@ -1099,6 +1222,11 @@ function update_mk_file() {
 	for (( i=0; i<${opt_len}; i++ ));
 	do
 		temp_value=$(get_backup_value_option ${BACKUP_FLAG[$i]})
+
+		if [ "${temp_value}" == "" ]; then
+			temp_value=N
+		fi
+
 		BACKUP_OPTION_VALUE+=(${temp_value})
 	done
 
@@ -1793,7 +1921,10 @@ function make_update_file_tool() {
 				make_update_file_help
 				;;
 			list | -l | \?)
-				show_mkapp_list $2
+				visualized_mkapp_list $2
+				;;
+			title | \!)
+				visualized_mkapp_list title
 				;;
 			set | setting | -s)
 				change_project $2
