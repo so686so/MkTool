@@ -270,9 +270,9 @@ AUTO_NFS_DETECT=Y
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
-FASTER_MK_APP=Y
+FASTER_MK_APP=N
 
-MK_VERSION=1.3.7
+MK_VERSION=1.3.8
 LAST_UPDATE=2022-05-03
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1223,7 +1223,7 @@ function update_mk_file() {
 	do
 		temp_value=$(get_backup_value_option ${BACKUP_FLAG[$i]})
 
-		if [ "${temp_value}" == "" ]; then
+		if [ "${temp_value}" == "" -a ! ${BACKUP_FLAG[$i]} == "ROOT_PW" ]; then
 			temp_value=N
 		fi
 
