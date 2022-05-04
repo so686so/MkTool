@@ -270,10 +270,10 @@ AUTO_NFS_DETECT=Y
 AUTO_BACKUP=N
 CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
-FASTER_MK_APP=N
+FASTER_MK_APP=Y
 
-MK_VERSION=1.3.8
-LAST_UPDATE=2022-05-03
+MK_VERSION=1.3.9
+LAST_UPDATE=2022-05-04
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
 
@@ -488,6 +488,7 @@ function extract_mkapp_list_one_line() {
 function visualized_mkapp_list() {
 
 	local READ_DATA=`extract_mkapp_list_one_line`
+	READ_DATA=`echo ${READ_DATA//\# /\#}`
 
 	local REPEAT_COUNT=`echo $READ_DATA | awk -F ";;" "{print NF}"`
 	local SEARCH_COUNT="\$1"
@@ -528,6 +529,11 @@ function visualized_mkapp_list() {
 				# check grep fw list
 				for each in ${APP_LIST[@]}
 				do
+					if [[ "$each" == *\#* ]]
+					then
+						continue
+					fi
+
 					find_name=`echo -e $each | grep -i $1`
 					if [ ! "${find_name}" == "" ]
 					then
@@ -545,7 +551,10 @@ function visualized_mkapp_list() {
 
 					for each in ${APP_LIST[@]}
 					do
-						if [ "${find_name}" == $"${each//';;'/}" ]
+						if [[ "$each" == *\#* ]]
+						then
+							echo -e "   ${cDim}${each//#/# }${cReset}"
+						elif [ "${find_name}" == $"${each//';;'/}" ]
 						then
 							echo -e "   - ${cYellow}${each//';;'/}${cReset}"
 						else
@@ -561,7 +570,12 @@ function visualized_mkapp_list() {
 
 				for each in ${APP_LIST[@]}
 				do
-					echo -e "   - ${each//';;'/}"
+					if [[ "$each" == *\#* ]]
+					then
+						echo -e "   ${cDim}${each//#/# }${cReset}"
+					else
+						echo -e "   - ${each//';;'/}"
+					fi
 				done
 				echo
 			fi
@@ -572,7 +586,12 @@ function visualized_mkapp_list() {
 
 			for each in ${APP_LIST[@]}
 			do
-				echo -e "   - ${each//';;'/}"
+				if [[ "$each" == *\#* ]]
+				then
+					echo -e "   ${cDim}${each//#/# }${cReset}"
+				else
+					echo -e "   - ${each//';;'/}"
+				fi
 			done
 			echo
 		fi
@@ -1018,8 +1037,6 @@ function make_update_file_help() {
 	echo -e "     mk ${cGreen}aoki${cReset}	: 'make install' & 'mk_app.sh ${cGreen}aoki${cReset}'"
 	echo -e "     mk ${cGreen}gdr${cReset} all	: 'make clean install' & 'mk_app.sh ${cGreen}gdr${cReset}'"
 	echo -e "\n ---------------------------------------------------------------------------\n"
-	echo -e " * mk clear\t: Clear the '~/tftpboot/../fw_install' in Current Project"
-	echo -e " * mk store\t: Backup the '../fw_install' in Current Project"
 	echo -e " * ${cYellow}mk open${cReset}\t: Open the '../fw_install' in Current Project or Other Dir."
 	echo -e " * ${cYellow}mk upp${cReset}\t: sudo apt update & upgrade at once"
 	echo -e " * mk version\t: View version information"
@@ -1526,7 +1543,7 @@ function kill_all_terminal() {
     done
 
 	echo -e
-	killall nautilus
+	killall --quiet nautilus
 
     echo -e "\n${DONE} Kill all Terminal & Folder\n"
 }
@@ -1600,7 +1617,8 @@ function solve_gitPull_conflict() {
 	local selectFile=""
 	local pre_dir=`pwd`
 	local CUR_BACKUP_DATE=`date +%m%d`
-	local check_format='\.c|makefile|\.ini|\.h'
+	local CUR_BACKUP_TIME=`date +%H%M`
+	local check_format='\.c|Makefile|makefile|\.ini|\.h|\.sh|\.xml'
 	local prevFile=""
 	local fixedFile=""
 
@@ -1610,7 +1628,6 @@ function solve_gitPull_conflict() {
 
 	echo -e "\n${RUN} solve_gitPull_conflict"
 	echo -e "${NOTICE} You Need Match Project to SolveConflict [ Cur : ${cYellow}${CUR_PROJECT}${cReset} ]"
-	echo -e "( Tab : Choose File / Enter : Finish Choose File / Esc : Exit )"
 
 	if [ ! -d "${TEMP_BACKUP_CONFILICT_FILES}" ]
 	then
@@ -1618,16 +1635,18 @@ function solve_gitPull_conflict() {
 		mkdir ${TEMP_BACKUP_CONFILICT_FILES}
 	fi
 
-	if [ ! -d "${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}" ]
+	if [ ! -d "${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}_${CUR_BACKUP_TIME}" ]
 	then
-		echo -e "${SET} Create BackupDir : ${cGreen}${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}${cReset}"
-		mkdir ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}
+		echo -e "${SET} Create BackupDir : ${cGreen}${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}_${CUR_BACKUP_TIME}${cReset}"
+		mkdir ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}_${CUR_BACKUP_TIME}
 	fi
+
+	echo -e "\n( Tab : Select File / Enter : Finish / Esc : Exit )"
 
 	cd ${rootDir}
 	selectFile=$(fzf ${FZF_SETTING} \
 			--preview "cat -n {}" \
-			--header "[ Select the file to Move ]")
+			--header "[ File select:TAB / Finish:Enter / Cancel:ESC ]")
 
 	moveList+=(${selectFile})
 
@@ -1641,13 +1660,13 @@ function solve_gitPull_conflict() {
 
 	for i in ${!moveList[@]}
 	do
-		cp -avi ${moveList[i]} ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}
+		cp -avi ${moveList[i]} ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}_${CUR_BACKUP_TIME}
 		git checkout -- ${rootDir}/${moveList[i]}
 	done
 
 	manage_git_pull
 
-	cd ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}
+	cd ${TEMP_BACKUP_CONFILICT_FILES}/${CUR_BACKUP_DATE}_${CUR_BACKUP_TIME}
 	checkList+=($(ls))
 
 	resize -s 24 160 >/dev/null
