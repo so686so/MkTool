@@ -272,7 +272,7 @@ CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 FASTER_MK_APP=Y
 
-MK_VERSION=1.3.9
+MK_VERSION=1.4.0
 LAST_UPDATE=2022-05-04
 
 PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
@@ -1792,7 +1792,7 @@ function show_git_status() {
 	echo -e "===================================================================================="
 	git status -b | head -2
 	echo -e "------------------------------------------------------------------------------------"
-	git status -uno | grep -E "Makefile|makefile|\.c$|\.cpp$|\.h$|\.sh$"
+	git status -uno | grep -E "Makefile|makefile|\.c$|\.cpp$|\.h$|\.sh|\.ini|\.xml$"
 	echo -e "===================================================================================="
 	echo
 }
@@ -2049,7 +2049,7 @@ alias sc='f() {
 			echo -e "${DONE} Source ~/.bashrc Complete "; }; f'
 
 alias x='exit'
-alias t='gnome-terminal'
+alias t='gnome-terminal --working-directory="$(pwd)"'
 
 alias cds='cd ~/blackbox/source'
 alias cdss='cd ~/blackbox/system'
@@ -2058,8 +2058,8 @@ alias cdu='cd ~/blackbox/util'
 alias Vim='vim -O'
 
 # alias st='strip_file'
-alias get_idf='. $HOME/ESP/esp-idf/export.sh'
-alias get_42_if='. $HOME/ESP/esp_4_2/esp-idf/export.sh'
+# alias get_idf='. $HOME/ESP/esp-idf/export.sh'
+# alias get_42_if='. $HOME/ESP/esp_4_2/esp-idf/export.sh'
 alias mm='make clean; make; make install;'
 
 function show_alias() {
