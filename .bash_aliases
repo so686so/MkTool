@@ -34,7 +34,7 @@
 # ================================================================= #
 GitAddress="https://github.com/so686so/MkTool.git"
 
-# Fix Carriage Return Error when Window <-> Linux 
+# Fix Carriage Return Error when Window <-> Linux
 sed -i -e 's/\r$//' ~/.bash_aliases
 sed -i -e 's/\r$//' ~/.bash_completion
 
@@ -57,8 +57,8 @@ ERROR="${cBold}[ ${cRed}ERROR${cReset} ${cBold}]${cReset}"
 NOTICE="${cBold}[ ${cYellow}NOTICE${cReset} ${cBold}]${cReset}"
 DONE="${cBold}[ ${cGreen}DONE${cReset} ${cBold}]${cReset}"
 
-function HEAD() { 
-	echo -e -n "${cBold}[ $1 ]${cReset}" 
+function HEAD() {
+	echo -e -n "${cBold}[ $1 ]${cReset}"
 }
 
 function check_installed_package() {
@@ -114,7 +114,7 @@ function get_install_dir() {
 		echo -e -n "${HOME}/install/janus_a3"
 	else
 		echo -e -n "${HOME}/install/gnet_$1"
-	fi	
+	fi
 }
 
 
@@ -165,7 +165,7 @@ function fzf_connect_vim() {
 	# check grep word
 	if [ "$#" -eq 2 ]
 	then
-		search_value=$2 
+		search_value=$2
 		echo -e "${SET} grep -> ${cLine}$2${cReset}"
 
 		# rg -i --files-with-matches --no-messages : find word-matcthes files list
@@ -193,7 +193,7 @@ function fzf_connect_vim() {
 	if [ ! "${_file}" == "" ]
 	then
 		if [ "$#" -eq 2 ]
-		then 
+		then
 			vim -O -c "/$2" ${_file}
 		else
 			vim -O ${_file}
@@ -212,7 +212,7 @@ function fzf_connect_cd() {
 	echo -e "${RUN} fzf-cd Utility in ${cLine}$(pwd)${cReset}"
 
 	if [ "$#" -eq 1 ]
-	then 
+	then
 		echo -e "${SET} grep -> ${cLine}$1${cReset}"
 		_file=$(rg -i --files-with-matches --no-messages "$1" |\
 				fzf ${FZF_SETTING}\
@@ -272,10 +272,10 @@ CHANGE_PROMPT=Y
 IMPROVED_AUTO_COMPLETE=Y
 FASTER_MK_APP=Y
 
-MK_VERSION=1.4.0
-LAST_UPDATE=2022-05-04
+MK_VERSION=1.4.1
+LAST_UPDATE=2022-06-24
 
-PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" ) 
+PROJECT_LIST=( "A3" "S3" "V3" "V4" "V8" )
 
 TEMP_BACKUP_CONFILICT_FILES="${HOME}/blackbox/tempBackupConflict"
 
@@ -363,7 +363,7 @@ function version_change_to_upload() {
 	local UPDATE_TIME_LINE=$(get_line_option LAST_UPDATE)
 
 	local LAST_VERSION=`echo ${MK_VERSION//./}`
-	LAST_VERSION=$(( ${LAST_VERSION} + 1 )) 
+	LAST_VERSION=$(( ${LAST_VERSION} + 1 ))
 
 	local CURRENT_VERSION=`echo ${LAST_VERSION:0:1}.${LAST_VERSION:1:1}.${LAST_VERSION:2:1}`
 	local CURRENT_DATE=`date +%Y-%m-%d`
@@ -446,8 +446,8 @@ function change_project() {
 
 		# Exit
 		for value in ${LIST[@]}; do [ "${value}" == "${SELECT_PROJECT}" ] && check_value="true"; done
-		if [ "${check_value}" == "false" ] 
-		then 
+		if [ "${check_value}" == "false" ]
+		then
 			echo -e ${ERROR} "Invalid Project Name"
 			return
 		fi
@@ -516,7 +516,7 @@ function visualized_mkapp_list() {
 		then
 			echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${APP_TITLE}${cReset}"
 
-		# Search word 
+		# Search word
 		# --> Search Start
 		elif [ ! "$1" == "" ]
 		then
@@ -579,7 +579,7 @@ function visualized_mkapp_list() {
 				done
 				echo
 			fi
-		
+
 		# None Args : normal case
 		else
 			echo -e " ${cBold}${cSky}[$i]${cReset} ${cBold}${APP_TITLE}${cReset}"
@@ -615,7 +615,7 @@ function show_mkapp_list() {
 function extract_mkapp_list() {
 	local TEMP=`show_mkapp_list | grep \) | awk -F ')' '{print $1}' | head -n -1`
 	TEMP=`echo ${TEMP// /} | awk -F ' ' '{print $0}'`
-	echo -e $TEMP 
+	echo -e $TEMP
 }
 
 function setting_option() {
@@ -652,7 +652,7 @@ function setting_option() {
 
 			test "${opt_value}" == "Y" && printf "${cGreen}"
 			test "${opt_value}" == "N" && printf "${cDim}"
-			echo -e "$n ${separator} ${OPT_LIST[$n]}" 
+			echo -e "$n ${separator} ${OPT_LIST[$n]}"
 			printf "${cReset}"
 		done
 		echo -e "-------------------------------------------------------------------------------"
@@ -831,6 +831,7 @@ function git_stash_apply_backup_file() {
 	echo -e "${DONE} BackUp file load complete.\n"
 }
 
+# HERE
 function make_update_file() {
 
 	local _option=" "
@@ -910,7 +911,7 @@ function make_update_file() {
 
 		echo -e "${RUN} make${_option}install.\n"
 		make${_option}install
-		
+
 		if [ $? -gt 0 ]
 		then
 			echo -e "\n${ERROR} make${_option}install FAILED.\n"
@@ -935,7 +936,7 @@ function make_update_file() {
 		touch make_app.log
 
 		cp -af mk_app.sh faster_mk_app.sh
-		sed -i "s/-processors 1/-processors ${core_num} -no-progress/g" faster_mk_app.sh
+		sed -i "s/-processors 1/-processors ${core_num} -no-progress /g" faster_mk_app.sh
 		sed -i 's/rm -rf ${SQFS_NAME}/rm -rf ${SQFS_NAME}\n echo -e " - $INSTALL_TOTAL_NAME.arm" >> make_app.log\n/g' faster_mk_app.sh
 
 		./faster_mk_app.sh "$1"
@@ -989,12 +990,12 @@ function make_update_file() {
 		then
 			echo -e "\n${ERROR} Copy file FAILED.\n"
 			return
-		fi		
+		fi
 
 		echo -e "${DONE}\tFile Copy to '~/FW' Direcotry.\n"
 	fi
 
-	# Auto copy file to ~install ( ./janus ) 
+	# Auto copy file to ~install ( ./janus )
 	if [ "${AUTO_NFS_DETECT}" == "Y" ]
 	then
 		ping ${NFS_IP} -c 1 -i 1 &>/dev/null
@@ -1122,7 +1123,7 @@ function manage_dir_clear() {
 			then
 				run_dir_clear ${arg}
 			fi
-		done 
+		done
   	done
 }
 
@@ -1173,7 +1174,7 @@ function manage_git_pull() {
 			then
 				run_git_pull ${arg}
 			fi
-		done 
+		done
   	done
 	echo -e "${DONE} Git Pull\n"
 }
@@ -1206,7 +1207,7 @@ function fw_install_dir_backup() {
 	then
 		echo -e "\n${ERROR} Move file FAILED.\n"
 		return
-	fi		
+	fi
 
 	echo -e "\n${DONE} File Move to ${cGreen}${BACKUP_DIR}${cReset} Directory.\n"
 }
@@ -1478,7 +1479,7 @@ function sd_copy_file() {
 		echo -e "\n${ERROR} Unmount SD card FAILED.\n"
 		return
 	fi
-	
+
 	echo -e "\n${DONE} Copy file ${cGreen}${SELECT_FILE}${cReset} to SD card Done"
 	echo -e "${NOTICE} Please Uncheck Vbox Menu - USB\n"
 }
@@ -1555,7 +1556,7 @@ function show_info() {
 		echo -e "${NOTICE} : Sorry. that function need ${cGreen}duf${cReset} Package"
 		echo -e "- sudo apt-get install duf"
 		return
-	fi	
+	fi
 
 	resize -s 32 ${COLUMNS} >/dev/null
 	duf /home
@@ -1734,7 +1735,7 @@ function open_git_cola() {
 	fi
 
 	echo -e "${RUN} open_git_cola [ ${cYellow}$SELECT_PROJECT${cReset} ]"
-	
+
 	git-cola -r ${HOME}/blackbox/${SELECT_PROJECT}
 }
 
@@ -1752,7 +1753,7 @@ function show_git_log() {
 	git log --color --pretty=format:'%<(2)%C(bold blue)[%>(9) %cr ]%C(reset) - %<(9)%s %C(bold green)/ %an %C(reset)' --since=$check_day.Days
 	echo -e " =================================================================================================="
 
-	echo	
+	echo
 }
 
 function show_git_log_all() {
@@ -1836,7 +1837,7 @@ function search_tree() {
 		/bin/python3 ${EXT_SEARCH_TREE} $1
 	fi
 
-	
+
 
 	if [ -e ${EXTENSIONS_DIR}/${SEARCH_TREE_LOG} ]
 	then
@@ -1872,6 +1873,73 @@ function show_patch_log() {
 	echo -e " =========================================================================================\n"
 
 	cd ${pre_dir}
+}
+
+function unpack_fw_file() {
+	local pre_dir=`pwd`
+	local project_name=$(project_version_name)
+	local SELECT_FILE=
+
+	echo -e "\n${RUN} unpack_fw_file"
+
+	check_installed_package fzf
+	if [ $? -gt 0 ]
+	then
+		show_how_install_fzf
+		return
+	fi
+
+	local TARGET_DIR="${HOME}/tftpboot/gnet_${project_name}"
+
+	cd ${TARGET_DIR}/fw_install
+	SELECT_FILE=`find . -maxdepth 1 -type f | \
+				fzf --cycle --height 30% --reverse --border \
+				--header "[ Select .arm file to unpack ]"`
+
+	if [ "${SELECT_FILE}" == "" ]
+	then
+		echo -e "${NOTICE} unpack_fw_file cancel"
+		return
+	fi
+
+	echo -e "================================================="
+	echo $SELECT_FILE
+	echo -e "================================================="
+
+	local UNPACK_DIR=`basename ${SELECT_FILE} | awk -F '.' '{printf $1}'`
+
+	if [ -d "${TARGET_DIR}/Unpack" ]
+	then
+		if [ -d "${TARGET_DIR}/Unpack/$UNPACK_DIR" ]
+		then
+			echo -e $SET Already Exist Same .arm Dir
+		else
+			mkdir ${TARGET_DIR}/Unpack/$UNPACK_DIR
+		fi
+	else
+		mkdir ${TARGET_DIR}/Unpack
+		mkdir ${TARGET_DIR}/Unpack/$UNPACK_DIR
+	fi
+
+	cp -a ${HOME}/blackbox/system/trfw/trfw ${TARGET_DIR}/Unpack/$UNPACK_DIR/
+	cd ${TARGET_DIR}/Unpack/$UNPACK_DIR
+
+	echo
+	echo -e $RUN Unpacking...
+	./trfw -r ${TARGET_DIR}/fw_install/${SELECT_FILE}
+
+	echo
+	echo -e $RUN Unzip Files...
+	echo -e "================================================="
+	tar -xvf ./temp_fw_gnet.arm
+	echo -e "=================================================\n"
+
+	rm ./temp_fw_gnet.arm ./trfw
+	echo -e $DONE unpack_fw_file
+	echo
+
+	nautilus .
+	cd $pre_dir
 }
 
 function make_update_file_tool() {
@@ -2020,7 +2088,7 @@ function make_update_file_tool() {
 				search_tree $2
 				;;
 			ktree)
-				search_tree kernel $2 
+				search_tree kernel $2
 				;;
 			status)
 				show_git_status_all
@@ -2028,11 +2096,14 @@ function make_update_file_tool() {
 			patch_log)
 				show_patch_log
 				;;
+			unpack)
+				unpack_fw_file
+				;;
 			*)
 				make_update_file $1 $2
 				;;
 		esac
-	fi 
+	fi
 
 	cd ${CUR_DIR}
 }
@@ -2102,7 +2173,7 @@ function strip_file() {
 			echo -e "[ \x1b[32mStip File\x1b[0m ] - ${CUR_DIR}${each}"
 		else
 			echo -e "${CUR_DIR}${each} not a suitable format to run strip"
-		fi 
+		fi
 		VAR=
 	done
 }
